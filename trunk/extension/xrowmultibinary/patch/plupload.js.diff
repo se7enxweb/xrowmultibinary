@@ -1,0 +1,9 @@
+        /**
+         *
+         * @method addFile
+         * @param {Object} File
+         */
+        addFile : function( file ) {
+            files.push( file );
+            calc();
+        },
