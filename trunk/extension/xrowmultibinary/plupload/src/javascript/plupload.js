@@ -698,6 +698,7 @@
 			 * @type String
 			 */
 			id : plupload.guid(),
+			
 
 			/**
 			 * Initializes the Uploader instance and adds internal event listeners.
@@ -760,10 +761,23 @@
 
 							continue;
 						}
+						
+						// check if the file was already there
+						var file_exists = false;
+						$.each( files, function( i, existingfile ) {
+							if ( existingfile.name == file.name )
+							{
+								file_exists = true;
+							}
+						});
+						
 
 						// Add valid file to list
-						files.push(file);
-						count++;
+						if ( !file_exists )
+						{
+							files.push(file);
+							count++;
+						}
 					}
 
 					// Only trigger QueueChanged event if any files where added
@@ -957,7 +971,7 @@
 					}
 				}
 			},
-
+			
 			/**
 			 * Removes part of the queue and returns the files removed. This will also trigger the FilesRemoved and QueueChanged events.
 			 *
