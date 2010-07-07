@@ -11,7 +11,7 @@
 
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
-<script type="text/javascript" src="/extension/xrowmultibinary/standard/javascript/gears_init.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/gears_init.js"></script>
 <script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
 
 <!-- Load source versions of the plupload script files -->
