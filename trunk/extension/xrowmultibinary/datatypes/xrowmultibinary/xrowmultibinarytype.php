@@ -11,7 +11,7 @@ class xrowMultiBinaryType extends eZDataType
 
     function __construct()
     {
-        $this->eZDataType( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Multiple Files", 'Datatype name' ),
+        $this->eZDataType( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Multiple Files', 'Datatype name' ),
                            array( 'serialize_supported' => true ) );
     }
 
@@ -30,13 +30,13 @@ class xrowMultiBinaryType extends eZDataType
     {
         if ( $currentVersion != false )
         {
-            $contentObjectAttributeID = $originalContentObjectAttribute->attribute( "id" );
-            $version = $contentObjectAttribute->attribute( "version" );
+            $contentObjectAttributeID = $originalContentObjectAttribute->attribute( 'id' );
+            $version = $contentObjectAttribute->attribute( 'version' );
             $oldfiles = eZBinaryFile2::fetch( $contentObjectAttributeID, $currentVersion );
             foreach ( $oldfiles as $oldfile ){
 
                 $oldfile->setAttribute( 'contentobject_attribute_id', $contentObjectAttribute->attribute( 'id' ) );
-                $oldfile->setAttribute( "version",  $version );
+                $oldfile->setAttribute( 'version',  $version );
                 $oldfile->store();
             }
         }
@@ -96,9 +96,6 @@ class xrowMultiBinaryType extends eZDataType
         }
     }
 
-/*
- * @TODO
- */
     function deleteStoredObjectAttribute( $contentObjectAttribute, $version = null )
     {
         $contentObjectAttributeID = $contentObjectAttribute->attribute( "id" );
@@ -161,8 +158,8 @@ class xrowMultiBinaryType extends eZDataType
         {
             $contentObjectAttributeID = $contentObjectAttribute->attribute( "id" );
             $version = $contentObjectAttribute->attribute( "version" );
-            $binary = eZBinaryFile2::fetch( $contentObjectAttributeID, $version );
-            if ( count( $binary ) === 0 )
+            $binaryArray = eZBinaryFile2::fetch( $contentObjectAttributeID, $version );
+            if ( count( $binaryArray ) === 0 )
             {
                 $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                  'A valid file is required.' ) );
@@ -173,9 +170,32 @@ class xrowMultiBinaryType extends eZDataType
         return eZInputValidator::STATE_ACCEPTED;
     }
 
+    /*
+     * Get the new file array after maybe deleting and check with the existing db table data
+     */
     function fetchObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
-        //$contentObjectAttribute->setContent( $binaryFile );
+        if ( $http->hasPostVariable( 'plup_tmp_name' ) )
+        {
+            $contentObjectAttributeID = $contentObjectAttribute->attribute( "id" );
+            $version = $contentObjectAttribute->attribute( "version" );
+            $binaryArray = eZBinaryFile2::fetch( $contentObjectAttributeID, $version );
+
+            if ( is_array( $binaryArray ) && count( $binaryArray ) > 0 )
+            {
+                $files = $http->postVariable( 'plup_tmp_name' );
+
+                foreach ( $binaryArray as $binaryFile )
+                {
+                    if ( !in_array( $binaryFile->attribute( 'original_filename' ), $files ) )
+                    {
+                        eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
+                    }
+                }
+                $contentObjectAttribute->setAttribute( 'data_text', serialize( $files ) );
+                $contentObjectAttribute->store();
+            }
+        }
     }
 
     /*!
@@ -187,7 +207,7 @@ class xrowMultiBinaryType extends eZDataType
 
     function customObjectAttributeHTTPAction( $http, $action, $contentObjectAttribute, $parameters )
     {
-        if( $action == "delete_binary" )
+        if( $action == 'delete_binary' )
         {
             $contentObjectAttributeID = $contentObjectAttribute->attribute( "id" );
             $version = $contentObjectAttribute->attribute( "version" );
@@ -210,56 +230,7 @@ class xrowMultiBinaryType extends eZDataType
                                 $objectAttribute, $filePath,
                                 &$result )
     {
-        $result = array( 'errors' => array(),
-                         'require_storage' => false );
-        $attributeID = $objectAttribute->attribute( 'id' );
-
-
-        $binary = eZBinaryFile2::create( $attributeID, $objectVersion );
-
-        $fileName = basename( $filePath );
-        $mimeData = eZMimeType::findByFileContents( $filePath );
-        $storageDir = eZSys::storageDirectory();
-        list( $group, $type ) = explode( '/', $mimeData['name'] );
-        $destination = $storageDir . '/original/' . $group;
-
-        if ( !file_exists( $destination ) )
-        {
-            if ( !eZDir::mkdir( $destination, false, true ) )
-            {
-                return false;
-            }
-        }
-
-        // create dest filename in the same manner as eZHTTPFile::store()
-        // grab file's suffix
-        $fileSuffix = eZFile::suffix( $fileName );
-        // prepend dot
-        if( $fileSuffix )
-            $fileSuffix = '.' . $fileSuffix;
-        // grab filename without suffix
-        $fileBaseName = basename( $fileName, $fileSuffix );
-        // create dest filename
-        $destFileName = md5( $fileBaseName . microtime() . mt_rand() ) . $fileSuffix;
-        $destination = $destination . '/' . $destFileName;
-
-        copy( $filePath, $destination );
-
-        $fileHandler = eZClusterFileHandler::instance();
-        $fileHandler->fileStore( $destination, 'binaryfile', true, $mimeData['name'] );
-
-
-        $binary->setAttribute( "contentobject_attribute_id", $attributeID );
-        $binary->setAttribute( "version", $objectVersion );
-        $binary->setAttribute( "filename", $destFileName );
-        $binary->setAttribute( "original_filename", $fileName );
-        $binary->setAttribute( "mime_type", $mimeData['name'] );
-
-        $files = $objectAttribute->content( $binary );
-        $binary->store();
-		$files[] = $binary;
-        $objectAttribute->setContent( $binary );
-        return true;
+        throw new Exception( 'Method "'.__METHOD__.'" not supported' );
     }
 
 
@@ -273,8 +244,8 @@ class xrowMultiBinaryType extends eZDataType
     {
     	$binaryFile = eZPersistentObject::fetchObject( eZBinaryFile::definition(),
                                                     null,
-                                                    array( 'contentobject_attribute_id' => $objectAttribute->attribute( "id" ),
-                                                           'version' => $objectAttribute->attribute( "version" ),
+                                                    array( 'contentobject_attribute_id' => $objectAttribute->attribute( 'id' ),
+                                                           'version' => $objectAttribute->attribute( 'version' ),
                                                            'filename' => $id)
                                                       );
 
@@ -289,20 +260,22 @@ class xrowMultiBinaryType extends eZDataType
     {
         $binaryFile = eZPersistentObject::fetchObject( eZBinaryFile::definition(),
                                                     null,
-                                                    array( 'contentobject_attribute_id' => $objectAttribute->attribute( "id" ),
-                                                           'version' => $objectAttribute->attribute( "version" ),
+                                                    array( 'contentobject_attribute_id' => $objectAttribute->attribute( 'id' ),
+                                                           'version' => $objectAttribute->attribute( 'version' ),
                                                            'filename' => $id)
                                                       );
 
         $contentObjectAttributeID = $objectAttribute->attribute( 'id' );
-        $version =  $objectAttribute->attribute( "version" );
+        $version =  $objectAttribute->attribute( 'version' );
 
         if ( $binaryFile )
         {
             $db = eZDB::instance();
-            $db->query( "UPDATE ezbinaryfile SET download_count=(download_count+1)
-                         WHERE
-                         contentobject_attribute_id=$contentObjectAttributeID AND version=$version and filename='".eZDB::instance()->escapeString( $id )."'"  );
+            $db->query( 'UPDATE ezbinaryfile 
+                         SET download_count = ( download_count+1 )
+                         WHERE contentobject_attribute_id = $contentObjectAttributeID 
+                         AND version= $version 
+                         AND filename= "'.eZDB::instance()->escapeString( $id ).'"' );
             return true;
         }
         return false;
@@ -318,13 +291,13 @@ class xrowMultiBinaryType extends eZDataType
         }
     }
 
-    function title( $contentObjectAttribute,  $name = "original_filename" )
+    function title( $contentObjectAttribute,  $name = 'original_filename' )
     {
         $value = false;
     	$binaryFiles = eZPersistentObject::fetchObjectList( eZBinaryFile::definition(),
                                                         null,
-                                                        array( 'contentobject_attribute_id' => $contentObjectAttribute->attribute( "id" ),
-                                                           'version' => $contentObjectAttribute->attribute( "version" ) ) );
+                                                        array( 'contentobject_attribute_id' => $contentObjectAttribute->attribute( 'id' ),
+                                                           'version' => $contentObjectAttribute->attribute( 'version' ) ) );
         $names = array();
         foreach( $binaryFiles as $binaryFile){
         if ( is_object( $binaryFile ) )
@@ -337,31 +310,49 @@ class xrowMultiBinaryType extends eZDataType
     {
     	$binaryFiles = eZPersistentObject::fetchObjectList( eZBinaryFile::definition(),
                                                         null,
-                                                        array( 'contentobject_attribute_id' => $contentObjectAttribute->attribute( "id" ),
-                                                           'version' => $contentObjectAttribute->attribute( "version" ) ) );
+                                                        array( 'contentobject_attribute_id' => $contentObjectAttribute->attribute( 'id' ),
+                                                           'version' => $contentObjectAttribute->attribute( 'version' ) ) );
 
         if ( count( $binaryFiles ) > 0 )
         {
             return true;
         }
-            else
-            {
-        return false;
-            }
+        else
+        {
+            return false;
+        }
     }
 
     function objectAttributeContent( $contentObjectAttribute )
     {
         $binaryFiles = eZPersistentObject::fetchObjectList( eZBinaryFile::definition(),
                                                         null,
-                                                        array( 'contentobject_attribute_id' => $contentObjectAttribute->attribute( "id" ),
-                                                           'version' => $contentObjectAttribute->attribute( "version" ) ) );
+                                                        array( 'contentobject_attribute_id' => $contentObjectAttribute->attribute( 'id' ),
+                                                           'version' => $contentObjectAttribute->attribute( 'version' ) ) );
+
         if ( count( $binaryFiles ) == 0 )
         {
             $attrValue = false;
             return $attrValue;
         }
-        return $binaryFiles;
+
+        // sort the files
+        $sortconditions = unserialize( $contentObjectAttribute->attribute( 'data_text' ) );
+        if ( is_array( $sortconditions ) && count( $sortconditions ) > 0 )
+        {
+            foreach ( $binaryFiles as $binary )
+            {
+                // don't use array_search because array_search didn't read value with the key 0. don't know why...
+                foreach ( $sortconditions as $key => $value )
+                {
+                    if ( $binary->attribute( 'original_filename' ) == $value )
+                    {
+                        $sortedBinaryFiles[$key] = $binary;
+                    }
+                }
+            }
+        }
+        return $sortedBinaryFiles;
     }
 
     function isIndexable()
@@ -373,7 +364,7 @@ class xrowMultiBinaryType extends eZDataType
     {
         $binaryFiles = $contentObjectAttribute->content();
 
-        $metaData = "";
+        $metaData = '';
         foreach( $binaryFiles as $file )
         {
         if ( $file instanceof eZBinaryFile )
@@ -383,9 +374,7 @@ class xrowMultiBinaryType extends eZDataType
         }
         return $metaData;
     }
-/*
- * @TODO
- */
+
     function serializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $dom = $attributeParametersNode->ownerDocument;
@@ -395,9 +384,7 @@ class xrowMultiBinaryType extends eZDataType
         $maxSizeNode->setAttribute( 'unit-size', 'mega' );
         $attributeParametersNode->appendChild( $maxSizeNode );
     }
-/*
- * @TODO
- */
+
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $sizeNode = $attributeParametersNode->getElementsByTagName( 'max-size' )->item( 0 );
@@ -406,40 +393,9 @@ class xrowMultiBinaryType extends eZDataType
         $classAttribute->setAttribute( self::MAX_FILESIZE_FIELD, $maxSize );
     }
 
-/*
- * @TODO
- */
-    function toString( $objectAttribute )
-    {
-        $binaryFile = $objectAttribute->content();
-
-        if ( is_object( $binaryFile ) )
-        {
-            return implode( '|', array( $binaryFile->attribute( 'filepath' ), $binaryFile->attribute( 'original_filename' ) ) );
-        }
-        else
-            return '';
-    }
-
-/*
- * @TODO
- */
-    function fromString( $objectAttribute, $string )
-    {
-        if( !$string )
-            return true;
-
-        $result = array();
-        return $this->insertRegularFile( $objectAttribute->attribute( 'object' ),
-                                         $objectAttribute->attribute( 'version' ),
-                                         $objectAttribute->attribute( 'language_code' ),
-                                         $objectAttribute,
-                                         $string,
-                                         $result );
-    }
-/*
- * @TODO
- */
+    /*
+     * @TODO: hier die Funktion anpassen, dass mehrere Dateien eingelesen werden können. Momentan ist es nur für eine Datei gedacht
+     */
     function serializeContentObjectAttribute( $package, $objectAttribute )
     {
         $node = $this->createContentObjectAttributeDOMNode( $objectAttribute );
@@ -462,9 +418,10 @@ class xrowMultiBinaryType extends eZDataType
 
         return $node;
     }
-/*
- * @TODO
- */
+
+    /*
+     * @TODO: hier die Funktion anpassen, dass mehrere Dateien eingelesen werden können. Momentan ist es nur für eine Datei gedacht
+     */
     function unserializeContentObjectAttribute( $package, $objectAttribute, $attributeNode )
     {
         $fileNode = $attributeNode->getElementsByTagName( 'binary-file' )->item( 0 );
@@ -479,7 +436,7 @@ class xrowMultiBinaryType extends eZDataType
 
         if ( !file_exists( $sourcePath ) )
         {
-            eZDebug::writeError( "The file '$sourcePath' does not exist, cannot initialize file attribute with it",
+            eZDebug::writeError( 'The file "$sourcePath" does not exist, cannot initialize file attribute with it',
                                  'eZBinaryFileType::unserializeContentObjectAttribute' );
             return false;
         }
@@ -526,6 +483,6 @@ class xrowMultiBinaryType extends eZDataType
     }
 }
 
-eZDataType::register( xrowMultiBinaryType::DATA_TYPE_STRING, "xrowMultiBinaryType" );
+eZDataType::register( xrowMultiBinaryType::DATA_TYPE_STRING, 'xrowMultiBinaryType' );
 
 ?>
