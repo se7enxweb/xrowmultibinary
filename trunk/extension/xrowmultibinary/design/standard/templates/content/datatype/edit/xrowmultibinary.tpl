@@ -91,7 +91,7 @@ $(function() {
 
 	$("#uploader").pluploadQueue({
 		runtimes : 'html5,gears,flash,silverlight,browserplus',
-		url : '{/literal}{concat( 'xrowmultibinary/upload/',$attribute.id,'/',$attribute.version,'/',$attribute.language_code)|ezurl(no)}{literal}/' + randomString(),
+		url : '{/literal}{concat( "xrowmultibinary/upload/",$attribute.id,"/",$attribute.version,"/",$attribute.language_code)|ezurl(no)}{literal}/' + randomString(),
 		max_file_size : '2000mb',
 		chunk_size : '1mb',
 		unique_names : false,
