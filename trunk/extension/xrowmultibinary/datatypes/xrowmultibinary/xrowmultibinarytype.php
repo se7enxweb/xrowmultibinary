@@ -11,7 +11,7 @@ class xrowMultiBinaryType extends eZDataType
 
     function __construct()
     {
-        $this->eZDataType( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Multiple Files', 'Datatype name' ),
+        $this->eZDataType( self::DATA_TYPE_STRING, ezi18n( 'kernel/classes/datatypes', 'Multiple Files', 'Datatype name' ),
                            array( 'serialize_supported' => true ) );
     }
 
@@ -161,7 +161,7 @@ class xrowMultiBinaryType extends eZDataType
             $binaryArray = eZBinaryFile2::fetch( $contentObjectAttributeID, $version );
             if ( count( $binaryArray ) === 0 )
             {
-                $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
+                $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes',
                                                                  'A valid file is required.' ) );
             return eZInputValidator::STATE_INVALID;
             }
