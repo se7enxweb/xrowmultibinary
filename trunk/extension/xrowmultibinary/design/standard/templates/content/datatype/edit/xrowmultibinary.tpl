@@ -42,10 +42,10 @@ var html='<div class="plupload_wrapper plupload_scroll">' +
 	'<div class="plupload_content">' +
 		'<div class="plupload_filelist_header">' +
 			'<div class="plupload_file_name">' + 'Filename' + '</div>' +
-			'<div class="plupload_file_action2">&nbsp;</div>' +
+			'<div class="plupload_file_action_header2">&nbsp;</div>' +
 			'<div class="plupload_file_action">&nbsp;</div>' +
-			'<div class="plupload_file_status"><span>' + 'Status' + '</span></div>' +
 			'<div class="plupload_file_size">' + 'Size' + '</div>' +
+			'<div class="plupload_file_size">&nbsp;</div>' +
 			'<div class="plupload_clearer">&nbsp;</div>' +
 		'</div>' +
 		'<ul id="uploader_filelist" class="plupload_filelist">' +
@@ -59,8 +59,8 @@ var html='<div class="plupload_wrapper plupload_scroll">' +
 		'<span class="plupload_upload_status"></span>' +
 	'</div>' +
 	'<div class="plupload_file_action"></div>' +
-	'<div class="plupload_file_status"><span class="plupload_total_status">0%</span></div>' +
 	'<div class="plupload_file_size"><span class="plupload_total_file_size">0 b</span></div>' +
+	'<div class="plupload_file_status"><span class="plupload_total_status">0%</span></div>' +
 	'<div class="plupload_progress">' +
 		'<div class="plupload_progress_container">' +
 			'<div class="plupload_progress_bar"></div>' +
