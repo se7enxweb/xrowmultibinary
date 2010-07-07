@@ -105,14 +105,29 @@
 	float: right;
 	width: 80px;
 }
-.plupload_file_size, .plupload_file_status {text-align: right;}
-.plupload_file_action  {text-align: left;}
-.plupload_filelist .plupload_file_name {width: 205px}
-.plupload_file_action2 {
+.plupload_file_size, 
+.plupload_file_status {
+	text-align: right;
+}
+div.done {
+	background: url('../img/done.gif') no-repeat;
+	cursor: auto;
+}
+.plupload_file_action {
+	text-align: left;
+}
+/*.plupload_filelist .plupload_file_name {
+	width: 205px
+}*/
+.plupload_file_action_header2, .plupload_file_action2 {
 	float: right;
 	width: 16px;
 	height: 16px;
 	margin-left: 15px;
+}
+.plupload_file_action2 {
+	background: url('../img/delete.gif');
+	cursor: auto;
 }
 .plupload_file_action {
 	float: right;
@@ -130,16 +145,12 @@
 li.plupload_uploading {background: #ECF3DC url('../img/backgrounds.gif') repeat-x 0 -238px;}
 li.plupload_done {color:#AAA}
 
-div.plupload_file_action2 a{
-	background: url('../img/delete.gif');
-}
-
 li.plupload_failed a {
 	background: url('../img/error.gif');
 	cursor: default;
 }
 
-li.plupload_done a {
+li.plupload_done a, li.sortable a {
 	background: url('../img/done.gif');
 	cursor: default;
 }
