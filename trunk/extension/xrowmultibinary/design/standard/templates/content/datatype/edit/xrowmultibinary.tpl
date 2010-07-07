@@ -7,21 +7,21 @@
 <div id="uploader">You browser doesn't have no tools installed.</div>
 
 {/default}
-<link rel="stylesheet" href="/extension/xrowmultibinary/plupload/examples/css/plupload.queue.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="/extension/xrowmultibinary/design/standard/stylesheets/plupload.queue.css" type="text/css" media="screen" />
 
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
-<script type="text/javascript" src="/extension/xrowmultibinary/plupload/src/javascript/gears_init.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/standard/javascript/javascript/gears_init.js"></script>
 <script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
 
 <!-- Load source versions of the plupload script files -->
-<script type="text/javascript" src="/extension/xrowmultibinary/plupload/src/javascript/plupload.js"></script>
-<script type="text/javascript" src="/extension/xrowmultibinary/plupload/src/javascript/plupload.gears.js"></script>
-<script type="text/javascript" src="/extension/xrowmultibinary/plupload/src/javascript/plupload.silverlight.js"></script>
-<script type="text/javascript" src="/extension/xrowmultibinary/plupload/src/javascript/plupload.flash.js"></script>
-<script type="text/javascript" src="/extension/xrowmultibinary/plupload/src/javascript/plupload.browserplus.js"></script>
-<script type="text/javascript" src="/extension/xrowmultibinary/plupload/src/javascript/plupload.html5.js"></script>
-<script type="text/javascript" src="/extension/xrowmultibinary/plupload/src/javascript/jquery.plupload.queue.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/plupload.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/plupload.gears.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/plupload.silverlight.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/plupload.flash.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/plupload.browserplus.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/plupload.html5.js"></script>
+<script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/jquery.plupload.queue.js"></script>
 <script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/jquery-ui-1.8.1.custom.min.js"></script>
 
 
@@ -101,9 +101,9 @@ $(function() {
 		//	{title : "Zip files", extensions : "zip"}
 		//],
 		// Silverlight settings
-		silverlight_xap_url : '/extension/xrowmultibinary/plupload/js/plupload.silverlight.xap',
+		silverlight_xap_url : '/extension/xrowmultibinary/design/standard/javascript/plupload.silverlight.xap',
 		// Flash settings
-		flash_swf_url : '/extension/xrowmultibinary/plupload/js/plupload.flash.swf'
+		flash_swf_url : '/extension/xrowmultibinary/design/standard/javascript/plupload.flash.swf'
 	},
 	files,
 	html
