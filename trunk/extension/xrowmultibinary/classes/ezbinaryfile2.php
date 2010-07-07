@@ -39,7 +39,7 @@ class eZBinaryFile2 extends eZBinaryFile
                       'keys' => array( 'contentobject_attribute_id', 'version', 'filename' ),
                       'relations' => array( 'contentobject_attribute_id' => array( 'class' => 'ezcontentobjectattribute',
                                                                                    'field' => 'id' ) ),
-                      "function_attributes" => array( 'filesize' => 'fileSize',
+                      'function_attributes' => array( 'filesize' => 'fileSize',
                                                       'filepath' => 'filePath',
                                                       'mime_type_category' => 'mimeTypeCategory',
                                                       'mime_type_part' => 'mimeTypePart' ),
@@ -113,6 +113,23 @@ class eZBinaryFile2 extends eZBinaryFile
         {
             eZPersistentObject::removeObject( eZBinaryFile2::definition(),
                                               array( 'contentobject_attribute_id' => $id,
+                                                     'version' => $version ) );
+        }
+    }
+
+    static function removeByFileName( $filename, $id, $version )
+    {
+        if ( $version == null )
+        {
+            eZPersistentObject::removeObject( eZBinaryFile2::definition(),
+                                              array( 'filename' => $filename,
+                                                     'contentobject_attribute_id' => $id ) );
+        }
+        else
+        {
+            eZPersistentObject::removeObject( eZBinaryFile2::definition(),
+                                              array( 'filename' => $filename,
+                                                     'contentobject_attribute_id' => $id,
                                                      'version' => $version ) );
         }
     }
