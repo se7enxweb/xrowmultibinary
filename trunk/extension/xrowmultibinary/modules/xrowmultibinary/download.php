@@ -98,7 +98,7 @@ $result = $fileHandler->handleFileDownload( $contentObject, $contentObjectAttrib
 
 if ( $result == eZBinaryFileHandler::RESULT_UNAVAILABLE )
 {
-    eZDebug::writeError( "The specified file could not be found." );
+    eZDebug::writeError( 'The specified file could not be found.' );
     return $Module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel' );
 }
 

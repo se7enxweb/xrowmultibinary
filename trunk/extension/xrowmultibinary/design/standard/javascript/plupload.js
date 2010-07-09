@@ -763,13 +763,16 @@
 						}
 						
 						// check if the file was already there
-						var file_exists = false;
-						$.each( files, function( i, existingfile ) {
-							if ( existingfile.name == file.name )
-							{
-								file_exists = true;
-							}
-						});
+						if (settings.unique_names)
+						{
+							var file_exists = false;
+							$.each( files, function( i, existingfile ) {
+								if ( existingfile.name == file.name )
+								{
+									file_exists = true;
+								}
+							});
+						}
 						
 
 						// Add valid file to list
