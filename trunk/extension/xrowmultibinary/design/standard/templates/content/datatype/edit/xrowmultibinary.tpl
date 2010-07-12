@@ -2,6 +2,11 @@
 <div id="uploader">You browser doesn't have no tools installed.</div>
 {/default}
 
+{* fetch the content of the object *}
+
+{def $content_object = fetch( 'content', 'object', hash( 'object_id', $attribute.contentobject_id ) )
+     $max_num_files = $content_object.data_map.max_upload_count.content }
+
 <link rel="stylesheet" href="/extension/xrowmultibinary/design/standard/stylesheets/plupload.queue.css" type="text/css" media="screen" />
 
 <script type="text/javascript" src="/extension/xrowmultibinary/design/standard/javascript/google_jsapi.js"></script>
@@ -80,11 +85,12 @@ $(function() {
 
     $("#uploader").pluploadQueue({
         runtimes : 'html5,gears,flash,silverlight,browserplus',
-        url : '{/literal}{concat( "xrowmultibinary/upload/",$attribute.id,"/",$attribute.version,"/",$attribute.language_code)|ezurl(no)}{literal}/' + randomString(),
+        url : '{/literal}{concat( "/var/xrowmultibinary/upload/",$attribute.id,"/",$attribute.version,"/",$attribute.language_code)|ezurl(no)}{literal}/' + randomString(),
         max_file_size : '2000mb',
         chunk_size : '1mb',
         unique_names : true,
         rename: false,
+        max_num_files: '{/literal}{$max_num_files}{literal}',
         //filters : [
         //	{title : "Image files", extensions : "jpg,gif,png"},
         //	{title : "Zip files", extensions : "zip"}

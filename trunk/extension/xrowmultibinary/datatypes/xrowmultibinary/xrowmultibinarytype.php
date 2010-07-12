@@ -4,10 +4,12 @@
 class xrowMultiBinaryType extends eZDataType
 {
     const MAX_FILESIZE_FIELD = 'data_int1';
+    const MAX_NUMBER_OF_FILES_FIELD = 'data_int2';
 
-    const MAX_FILESIZE_VARIABLE = '_ezbinaryfile_max_filesize_';
+    const MAX_FILESIZE_VARIABLE = '_xrowmultibinary_max_filesize_';
+    const MAX_NUMBER_OF_FILES_VARIABLE = '_xrowmultibinary_max_number_of_files_';
 
-    const DATA_TYPE_STRING = "xrowmultibinary";
+    const DATA_TYPE_STRING = 'xrowmultibinary';
 
     function __construct()
     {
@@ -151,6 +153,7 @@ class xrowMultiBinaryType extends eZDataType
     {
         $classAttribute = $contentObjectAttribute->contentClassAttribute();
         $maxSize = 1024 * 1024 * $classAttribute->attribute( self::MAX_FILESIZE_FIELD );
+        $maxNumberOfFiles = $classAttribute->attribute( self::MAX_NUMBER_OF_FILES_FIELD );
 
         if ( $contentObjectAttribute->validateIsRequired() )
         {
@@ -287,6 +290,12 @@ class xrowMultiBinaryType extends eZDataType
             $filesizeValue = $http->postVariable( $filesizeName );
             $classAttribute->setAttribute( self::MAX_FILESIZE_FIELD, $filesizeValue );
         }
+        $filenumberName = $base . self::MAX_NUMBER_OF_FILES_VARIABLE . $classAttribute->attribute( 'id' );
+        if ( $http->hasPostVariable( $filenumberName ) )
+        {
+            $filenumberValue = $http->postVariable( $filenumberName );
+            $classAttribute->setAttribute( self::MAX_NUMBER_OF_FILES_FIELD, $filenumberValue );
+        }
     }
 
     function title( $contentObjectAttribute, $name = 'original_filename' )
@@ -327,6 +336,11 @@ class xrowMultiBinaryType extends eZDataType
 
     function objectAttributeContent( $contentObjectAttribute )
     {
+        $contentObjectID = $contentObjectAttribute->attribute( 'contentobject_id' );
+        $contentObject = eZContentObject::fetch( $contentObjectID );
+        $data_map = $contentObject->dataMap();
+        $max_upload_count = $data_map['max_upload_count']->content();
+
         $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
         
         if ( !is_array( $binaryFiles ) || count( $binaryFiles ) == 0 )
@@ -384,16 +398,23 @@ class xrowMultiBinaryType extends eZDataType
         $maxSize = $classAttribute->attribute( self::MAX_FILESIZE_FIELD );
         $maxSizeNode = $dom->createElement( 'max-size' );
         $maxSizeNode->appendChild( $dom->createTextNode( $maxSize ) );
-        $maxSizeNode->setAttribute( 'unit-size', 'mega' );
         $attributeParametersNode->appendChild( $maxSizeNode );
+
+        $maxNumberOf = $classAttribute->attribute( self::MAX_NUMBER_OF_FILES_FIELD );
+        $maxNumberOfNode = $dom->createElement( 'max-number-of' );
+        $maxNumberOfNode->appendChild( $dom->createTextNode( $maxNumberOf ) );
+        $attributeParametersNode->appendChild( $maxNumberOfNode );
     }
 
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
-        $sizeNode = $attributeParametersNode->getElementsByTagName( 'max-size' )->item( 0 );
-        $maxSize = $sizeNode->textContent;
-        $unitSize = $sizeNode->getAttribute( 'unit-size' );
+        $maxSizeNode = $attributeParametersNode->getElementsByTagName( 'max-size' )->item( 0 );
+        $maxSize = $maxSizeNode->textContent;
         $classAttribute->setAttribute( self::MAX_FILESIZE_FIELD, $maxSize );
+
+        $maxNumberOfNode = $attributeParametersNode->getElementsByTagName( 'max-number-of' )->item( 0 );
+        $maxNumberOf = $maxNumberOfNode->textContent;
+        $classAttribute->setAttribute( self::MAX_NUMBER_OF_FILES_FIELD, $maxNumberOf );
     }
 
     function serializeContentObjectAttribute( $package, $objectAttribute )

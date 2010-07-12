@@ -3,3 +3,7 @@
     <label>{'Max file size'|i18n( 'design/standard/class/datatype' )}:</label>
     <p>{$class_attribute.data_int1}&nbsp;MB</p>
 </div>
+<div class="block">
+    <label>{'Max number of files'|i18n( 'design/standard/class/datatype' )}:</label>
+    <p>{$class_attribute.data_int2}</p>
+</div>
