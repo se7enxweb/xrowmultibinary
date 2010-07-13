@@ -2,10 +2,19 @@
 <div id="uploader">You browser doesn't have no tools installed.</div>
 {/default}
 
-{* fetch the content of the object *}
+{* fetch the content of the class wich includes this datatype *}
+{def $class_id=ezini( 'Settings', 'ClassIdentifierOrId', 'xrowmultibinary.ini' )
+     $attribute_name=ezini( 'Settings', 'AttributeName', 'xrowmultibinary.ini' )
+     $content_object = fetch( 'content', 'class', hash( 'class_id', $class_id ) )
+     $max_filesize = $content_object.data_map.$attribute_name.data_int1
+     $max_number_of_files = $content_object.data_map.$attribute_name.data_int2
+     $file_button_text = 'Add files'
+}
 
-{def $content_object = fetch( 'content', 'object', hash( 'object_id', $attribute.contentobject_id ) )
-     $max_num_files = $content_object.data_map.max_upload_count.content }
+{if $max_number_of_files|eq( 1 )}
+    {set $file_button_text = 'Add file'}
+{/if}
+
 
 <link rel="stylesheet" href="/extension/xrowmultibinary/design/standard/stylesheets/plupload.queue.css" type="text/css" media="screen" />
 
@@ -49,7 +58,7 @@ var html='<div class="plupload_wrapper plupload_scroll">' +
                 '<div class="plupload_filelist_footer">' +
                     '<div class="plupload_file_name">' +
                         '<div class="plupload_buttons">' +
-                            '<a href="#" class="plupload_button plupload_add">' + 'Add files' + '</a>' +
+                            '<a href="#" class="plupload_button plupload_add">' + '{/literal}{$file_button_text}{literal}' + '</a>' +
                             '<a href="#" class="plupload_button plupload_start">' + 'Start upload' + '</a>' +
                         '</div>' +
                         '<span class="plupload_upload_status"></span>' +
@@ -85,12 +94,13 @@ $(function() {
 
     $("#uploader").pluploadQueue({
         runtimes : 'html5,gears,flash,silverlight,browserplus',
-        url : '{/literal}{concat( "/var/xrowmultibinary/upload/",$attribute.id,"/",$attribute.version,"/",$attribute.language_code)|ezurl(no)}{literal}/' + randomString(),
-        max_file_size : '2000mb',
+        url : '{/literal}{concat( "xrowmultibinary/upload/",$attribute.id,"/",$attribute.version,"/",$attribute.language_code)|ezurl(no)}{literal}/' + randomString(),
+        max_file_size : '{/literal}{$max_filesize}mb{literal}',
         chunk_size : '1mb',
-        unique_names : true,
+        unique_names : false,
+        no_files_with_same_name : true,
         rename: false,
-        max_num_files: '{/literal}{$max_num_files}{literal}',
+        max_number_of_files: '{/literal}{$max_number_of_files}{literal}',
         //filters : [
         //	{title : "Image files", extensions : "jpg,gif,png"},
         //	{title : "Zip files", extensions : "zip"}

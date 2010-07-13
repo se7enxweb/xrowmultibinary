@@ -339,7 +339,7 @@ class xrowMultiBinaryType extends eZDataType
         $contentObjectID = $contentObjectAttribute->attribute( 'contentobject_id' );
         $contentObject = eZContentObject::fetch( $contentObjectID );
         $data_map = $contentObject->dataMap();
-        $max_upload_count = $data_map['max_upload_count']->content();
+        #$max_upload_count = $data_map['max_upload_count']->content();
 
         $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
         
