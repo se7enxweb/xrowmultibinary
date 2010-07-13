@@ -7,307 +7,295 @@
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
  */
+
 // JSLint defined globals
 /*global plupload:false, jQuery:false */
 
 (function($) {
-    var uploaders = {};
+	var uploaders = {};
 
-    function _( str ) {
-        return plupload.translate( str ) || str;
-    }
+	function _(str) {
+		return plupload.translate(str) || str;
+	}
 
-    function renderUI( id, target , html ) {
-        // Remove all existing non plupload items
-        target.contents().each(function(i, node) {
-            node = $(node);
-            if ( !node.is('.plupload') ) {
-                node.remove();
-            }
-        });
-        target.prepend( html );
-        
-    }
+	function renderUI(id, target , html ) {
+		// Remove all existing non plupload items
+		target.contents().each(function(i, node) {
+			node = $(node);
 
-    $.fn.pluploadQueue = function( settings, files, html ) {
-        if (settings) {
-            this.each(function() {
-                var uploader, target, id;
+			if (!node.is('.plupload')) {
+				node.remove();
+			}
+		});
+		target.prepend( html );
+		
+	}
 
-                target = $(this);
-                id = target.attr('id');
+	$.fn.pluploadQueue = function(settings,files, html) {
+		if (settings) {
+			this.each(function() {
+				var uploader, target, id;
 
-                if (!id) {
-                    id = plupload.guid();
-                    target.attr('id', id);
-                }
+				target = $(this);
+				id = target.attr('id');
 
-                uploader = new plupload.Uploader($.extend({
-                    dragdrop : true,
-                    container : id
-                }, settings));
-                
-                // Call preinit function
-                if (settings.preinit) {
-                    settings.preinit(uploader);
-                }
-                
-                $.each( files, function( i, file ) {
-                    uploader.addFile( file );
-                });
+				if (!id) {
+					id = plupload.guid();
+					target.attr('id', id);
+				}
 
-                uploaders[id] = uploader;
-                
-                function handleStatus(file) {
-                    var actionClass;
+				uploader = new plupload.Uploader($.extend({
+					dragdrop : true,
+					container : id
+				}, settings));
+				
+				// Call preinit function
+				if (settings.preinit) {
+					settings.preinit(uploader);
+				}
+				$.each(files, function(i, file) { uploader.addFile(file)});
 
-                    if (file.status == plupload.DONE) {
-                        actionClass = 'plupload_done';
-                    }
+				uploaders[id] = uploader;
+				
+				
+				function handleStatus(file) {
+					var actionClass;
 
-                    if (file.status == plupload.FAILED) {
-                        actionClass = 'plupload_failed';
-                    }
+					if (file.status == plupload.DONE) {
+						actionClass = 'plupload_done';
+					}
 
-                    if (file.status == plupload.QUEUED) {
-                        actionClass = 'plupload_delete';
-                    }
+					if (file.status == plupload.FAILED) {
+						actionClass = 'plupload_failed';
+					}
 
-                    if (file.status == plupload.UPLOADING) {
-                        actionClass = 'plupload_uploading';
-                    }
+					if (file.status == plupload.QUEUED) {
+						actionClass = 'plupload_delete';
+					}
 
-                    $('#' + file.id).attr('class', actionClass).find('a').css('display', 'block');
-                }
+					if (file.status == plupload.UPLOADING) {
+						actionClass = 'plupload_uploading';
+					}
 
-                // after clicking the 'Start upload' button
-                function updateTotalProgress() {
-                    // calculate total percent of the upload
-                    var total_percent = 0;
-                    var needed_percent = 0;
-                    //alert(uploader.total.percent);
-                    for ( var property in uploader.files )
-                    {
-                        total_percent = parseInt( total_percent ) + parseInt( uploader.files[property]['percent'] );
-                        needed_percent = parseInt( needed_percent ) + 100;
-                    }
-                    uploader.total.percent = 100;
-                    if ( total_percent != needed_percent )
-                    {
-                        uploader.total.percent = Math.round( parseInt( total_percent ) * 100 / parseInt( needed_percent ) );
-                    }
-                    
-                    $('span.plupload_total_status', target).html(uploader.total.percent + '%');
-                    $('div.plupload_progress_bar', target).css('width', uploader.total.percent + '%');
-                    $('span.plupload_upload_status', target).text('Uploaded ' + uploader.total.uploaded + '/' + uploader.files.length + ' files');
+					$('#' + file.id).attr('class', actionClass).find('a').css('display', 'block');
+				}
 
-                    // All files are uploaded
-                    if (uploader.total.uploaded == uploader.files.length) {
-                        uploader.stop();
-                    }
-                }
-                
-                // after loading the attribute xrowmultibinary and the content (if there are files or not)
-                function updateList() {
-                    var fileList = $('ul.plupload_filelist', target).html(''), 
-                        inputCount = 0,
-                        inputHTML;
-                    
-                    $.each( uploader.files, function( i, file ) {
-                        inputHTML = '';
-                        if (file.status == plupload.DONE) {
-                            if (file.target_name) {
-                                inputHTML += '<input type="hidden" name="plup_tmp_name[]' + id + '_' + inputCount + '_tmpname" value="' + plupload.xmlEncode(file.target_name) + '" />';
-                            }
-                            inputHTML += '<input type="hidden" name="plup_id[]" value="' + id + '" />';
-                            inputHTML += '<input type="hidden" name="plup_tmp_name[]" value="' + plupload.xmlEncode(file.name) + '" />';
-                            inputHTML += '<input type="hidden" name="plup_status[]" value="' + (file.status == plupload.DONE ? 'done' : 'failed') + '" />';
-    
-                            inputCount++;
+				function updateTotalProgress() {
+					$('span.plupload_total_status', target).html(uploader.total.percent + '%');
+					$('div.plupload_progress_bar', target).css('width', uploader.total.percent + '%');
+					$('span.plupload_upload_status', target).text('Uploaded ' + uploader.total.uploaded + '/' + uploader.files.length + ' files');
 
-                            //$('#' + id + '_count').val(inputCount);
-                        }
+					// All files are uploaded
+					if (uploader.total.uploaded == uploader.files.length) {
+						uploader.stop();
+					}
+				}
 
-                        // If the file id includes a point ()
-                        var ID = file.id;
-                        if ( ID.indexOf( '.' ) )
-                        {
-                            var file_id = ID.split( '.' );
-                            file.id = file_id[0];
-                        }
-                        
-                        fileList.append(
-                            '<li id="' + file.id + '" class="sortable">' +
-                                '<div class="plupload_file_name"><span>' + file.name + '</span></div>' +
-                                '<div id="'+ file.id +'_delete" class="plupload_file_action2"></div>' +
-                                '<div class="plupload_file_action"><a href="#"></a></div>' +
-                                '<div class="plupload_file_size">' + plupload.formatSize(file.size) + '</div>' +
-                                '<div class="plupload_file_size">' + file.percent + '%</div>' +
-                                '<div class="plupload_clearer">&nbsp;</div>' +
-                                inputHTML +
-                            '</li>'
-                        );
+				function updateList() {
+			
+					var fileList = $('ul.plupload_filelist', target).html(''), inputCount = 0, inputHTML;
 
-                        $('#'+ file.id + '_delete').attr('title', 'Using runtime: ');
-                        $('#'+ file.id + '_delete').click(function(e)
-                        {
-                            $('#' + file.id).remove();
-                            uploader.removeFile(file);
+					$.each(uploader.files, function(i, file) {
+						inputHTML = '';
 
-                            e.preventDefault();
-                        });
-                        //handleStatus(file);
-                    });
+						if (file.status == plupload.DONE) {
+							if (file.target_name) {
+								inputHTML += '<input type="hidden" name="plup_tmp_name[]' + id + '_' + inputCount + '_tmpname" value="' + plupload.xmlEncode(file.target_name) + '" />';
+							}
+							inputHTML += '<input type="hidden" name="plup_id[]" value="' + id + '" />';
+							inputHTML += '<input type="hidden" name="plup_tmp_name[]" value="' + plupload.xmlEncode(file.name) + '" />';
+							inputHTML += '<input type="hidden" name="plup_status[]" value="' + (file.status == plupload.DONE ? 'done' : 'failed') + '" />';
+	
+							inputCount++;
 
-                    $('span.plupload_total_file_size', target).html(plupload.formatSize(uploader.total.size));
+							//$('#' + id + '_count').val(inputCount);
+						}
 
-                    if (uploader.total.queued === 0) {
-                        $('span.plupload_add_text', target).text(_('Add files.'));
-                    } else {
-                        $('span.plupload_add_text', target).text(uploader.total.queued + ' files queued.');
-                    }
+						fileList.append(
+							'<li id="' + file.id + '" class="sortable">' +
+								'<div class="plupload_file_name"><span>' + file.name + '</span></div>' +
+								'<div id="'+ file.id +'_delete" class="plupload_file_action2">&nbsp;ssssssssssss</div>' +
+								'<div class="plupload_file_action"><a href="#"></a></div>' +
+								'<div class="plupload_file_status">' + file.percent + '%</div>' +
+								'<div class="plupload_file_size">' + plupload.formatSize(file.size) + '</div>' +
+								'<div class="plupload_clearer">&nbsp;</div>' +
+								inputHTML +
+							'</li>'
+						);
+						 $('#' + file.id + '.plupload_delete a').click(function(e) {
+							 $('#' + file.id).remove();
+							 uploader.removeFile(file);
 
-                    $('a.plupload_start', target).toggleClass('plupload_disabled', uploader.files.length === 0);
+							 e.preventDefault();
+							 });
+						// div.plupload_file_action2 a/
+						$('#'+ file.id + '_delete').attr('title', 'Using ssssssssssruntime: ');
+						$('#'+ file.id + '_delete').click(function(e) {
+						
+											$('#' + file.id).remove();
+											uploader.removeFile(file);
 
-                    // Scroll to end of file list
-                    fileList[0].scrollTop = fileList[0].scrollHeight;
+											e.preventDefault();
+										});
+						alert("2");
+						//handleStatus(file);
+	
+					});
 
-                    updateTotalProgress();
 
-                    // Re-add drag message if there is no files
-                    if (!uploader.files.length && uploader.features.dragdrop && uploader.settings.dragdrop) {
-                        $('#' + id + '_filelist').append('<li class="plupload_droptext">' + _("Drag files here.") + '</li>');
-                    }
-                    $( 'ul.plupload_filelist' ).sortable();
-                }
+		
+					
+	
 
-                uploader.bind("UploadFile", function( up, file ) {
-                    $('#' + file.id).addClass('plupload_current_file');
-                });
+					$('span.plupload_total_file_size', target).html(plupload.formatSize(uploader.total.size));
 
-                uploader.bind('Init', function( up, res ) {
-                    renderUI( id, target, html );
+					if (uploader.total.queued === 0) {
+						$('span.plupload_add_text', target).text(_('Add files.'));
+					} else {
+						$('span.plupload_add_text', target).text(uploader.total.queued + ' files queued.');
+					}
 
-                    updateList();
-                    // Enable rename support
-                    if ( !settings.unique_names && settings.rename ) {
-                        $('#' + id + '_filelist div.plupload_file_name span', target).live('click', function(e) {
-                            var targetSpan = $(e.target), file, parts, name, ext = "";
+					$('a.plupload_start', target).toggleClass('plupload_disabled', uploader.files.length === 0);
 
-                            // Get file name and split out name and extension
-                            file = up.getFile(targetSpan.parents('li')[0].id);
-                            name = file.name;
-                            parts = /^(.+)(\.[^.]+)$/.exec(name);
-                            if (parts) {
-                                name = parts[1];
-                                ext = parts[2];
-                            }
+					// Scroll to end of file list
+					fileList[0].scrollTop = fileList[0].scrollHeight;
 
-                            // Display input element
-                            targetSpan.hide().after('<input type="text" />');
-                            targetSpan.next().val(name).focus().blur(function() {
-                                targetSpan.show().next().remove();
-                            }).keydown(function(e) {
-                                var targetInput = $(this);
+					updateTotalProgress();
 
-                                if (e.keyCode == 13) {
-                                    e.preventDefault();
+					// Re-add drag message if there is no files
+					if (!uploader.files.length && uploader.features.dragdrop && uploader.settings.dragdrop) {
+						$('#' + id + '_filelist').append('<li class="plupload_droptext">' + _("Drag files here.") + '</li>');
+					}
+					//$( 'ul.plupload_filelist' ).sortable();
+				}
 
-                                    // Rename file and glue extension back on
-                                    file.name = targetInput.val() + ext;
-                                    targetSpan.text(file.name);
-                                    targetInput.blur();
-                                }
-                            });
-                        });
-                    }
+				uploader.bind("UploadFile", function(up, file) {
+					$('#' + file.id).addClass('plupload_current_file');
+				});
 
-                    $('a.plupload_add', target).attr('id', id + '_browse');
+				uploader.bind('Init', function(up, res) {
+					renderUI( id, target, html);
 
-                    up.settings.browse_button = id + '_browse';
+					updateList();
+					// Enable rename support
+					if (!settings.unique_names && settings.rename) {
+						$('#' + id + '_filelist div.plupload_file_name span', target).live('click', function(e) {
+							var targetSpan = $(e.target), file, parts, name, ext = "";
 
-                    // Enable drag/drop
-                    if (up.features.dragdrop && up.settings.dragdrop) {
-                        up.settings.drop_element = id + '_filelist';
-                        $('#' + id + '_filelist').append('<li class="plupload_droptext">' + _("Drag files here.") + '</li>');
-                    }
+							// Get file name and split out name and extension
+							file = up.getFile(targetSpan.parents('li')[0].id);
+							name = file.name;
+							parts = /^(.+)(\.[^.]+)$/.exec(name);
+							if (parts) {
+								name = parts[1];
+								ext = parts[2];
+							}
 
-                    $('#' + id + '_container').attr('title', 'Using runtime: ' + res.runtime);
+							// Display input element
+							targetSpan.hide().after('<input type="text" />');
+							targetSpan.next().val(name).focus().blur(function() {
+								targetSpan.show().next().remove();
+							}).keydown(function(e) {
+								var targetInput = $(this);
 
-                    $('a.plupload_start', target).click(function(e) {
-                        if (!$(this).hasClass('plupload_disabled')) {
-                            uploader.start();
-                        }
+								if (e.keyCode == 13) {
+									e.preventDefault();
 
-                        e.preventDefault();
-                    });
+									// Rename file and glue extension back on
+									file.name = targetInput.val() + ext;
+									targetSpan.text(file.name);
+									targetInput.blur();
+								}
+							});
+						});
+					}
 
-                    $('a.plupload_stop', target).click(function(e) {
-                        uploader.stop();
+					$('a.plupload_add', target).attr('id', id + '_browse');
 
-                        e.preventDefault();
-                    });
+					up.settings.browse_button = id + '_browse';
 
-                    $('a.plupload_start', target).addClass('plupload_disabled');
-                });
+					// Enable drag/drop
+					if (up.features.dragdrop && up.settings.dragdrop) {
+						up.settings.drop_element = id + '_filelist';
+						$('#' + id + '_filelist').append('<li class="plupload_droptext">' + _("Drag files here.") + '</li>');
+					}
 
-                uploader.init();
+					$('#' + id + '_container').attr('title', 'Using runtime: ' + res.runtime);
 
-                // Call setup function
-                if (settings.setup) {
-                    settings.setup(uploader);
-                }
+					$('a.plupload_start', target).click(function(e) {
+						if (!$(this).hasClass('plupload_disabled')) {
+							uploader.start();
+						}
 
-                uploader.bind("Error", function(up, err) {
-                    var file = err.file, message;
+						e.preventDefault();
+					});
 
-                    if (file) {
-                        message = err.message;
+					$('a.plupload_stop', target).click(function(e) {
+						uploader.stop();
 
-                        if (err.details) {
-                            message += " (" + err.details + ")";
-                        }
+						e.preventDefault();
+					});
 
-                        $('#' + file.id).attr('class', 'plupload_failed').find('a').css('display', 'block').attr('title', message);
-                    }
-                });
+					$('a.plupload_start', target).addClass('plupload_disabled');
+				});
 
-                uploader.bind('StateChanged', function() {
-                    if (uploader.state === plupload.STARTED) {
-                        //$('li.plupload_delete a,div.plupload_buttons', target).hide();
-                        //$('span.plupload_upload_status,div.plupload_progress,a.plupload_stop', target).css('display', 'block');
-                        //$('span.plupload_upload_status', target).text('Uploaded 0/' + uploader.files.length + ' files');
-                    } else {
-                        $('a.plupload_stop,div.plupload_progress', target).hide();
-                        $('a.plupload_delete', target).css('display', 'block');
-                    }
-                });
+				uploader.init();
 
-                uploader.bind('QueueChanged', updateList);
+				// Call setup function
+				if (settings.setup) {
+					settings.setup(uploader);
+				}
 
-                uploader.bind('StateChanged', function(up) {
-                    if (up.state == plupload.STOPPED) {
-                        updateList();
-                    }
-                });
+				uploader.bind("Error", function(up, err) {
+					var file = err.file, message;
 
-                uploader.bind('FileUploaded', function(up, file) {
-                    handleStatus(file);
-                });
+					if (file) {
+						message = err.message;
 
-                uploader.bind("UploadProgress", function(up, file) {
-                    // Set file specific progress
-                    $('#' + file.id + ' div.plupload_file_status', target).html(file.percent + '%');
+						if (err.details) {
+							message += " (" + err.details + ")";
+						}
 
-                    handleStatus(file);
-                    updateTotalProgress();
-                });
-            });
+						$('#' + file.id).attr('class', 'plupload_failed').find('a').css('display', 'block').attr('title', message);
+					}
+				});
 
-            return this;
-        } else {
-            // Get uploader instance for specified element
-            return uploaders[$(this[0]).attr('id')];
-        }
-    };
+				uploader.bind('StateChanged', function() {
+					if (uploader.state === plupload.STARTED) {
+						//$('li.plupload_delete a,div.plupload_buttons', target).hide();
+						//$('span.plupload_upload_status,div.plupload_progress,a.plupload_stop', target).css('display', 'block');
+						//$('span.plupload_upload_status', target).text('Uploaded 0/' + uploader.files.length + ' files');
+					} else {
+						$('a.plupload_stop,div.plupload_progress', target).hide();
+						$('a.plupload_delete', target).css('display', 'block');
+					}
+				});
+
+				uploader.bind('QueueChanged', updateList);
+
+				uploader.bind('StateChanged', function(up) {
+					if (up.state == plupload.STOPPED) {
+						updateList();
+					}
+				});
+
+				uploader.bind('FileUploaded', function(up, file) {
+					handleStatus(file);
+				});
+
+				uploader.bind("UploadProgress", function(up, file) {
+					// Set file specific progress
+					$('#' + file.id + ' div.plupload_file_status', target).html(file.percent + '%');
+
+					handleStatus(file);
+					updateTotalProgress();
+				});
+			});
+
+			return this;
+		} else {
+			// Get uploader instance for specified element
+			return uploaders[$(this[0]).attr('id')];
+		}
+	};
 })(jQuery);
