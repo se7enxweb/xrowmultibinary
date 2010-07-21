@@ -7,30 +7,32 @@
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
  */
+
 // JSLint defined globals
 /*global plupload:false, jQuery:false */
 
 (function($) {
     var uploaders = {};
 
-    function _( str ) {
-        return plupload.translate( str ) || str;
+    function _(str) {
+        return plupload.translate(str) || str;
     }
 
-    function renderUI( id, target , html ) {
+    function renderUI(id, target , html) {
         // Remove all existing non plupload items
         target.contents().each(function(i, node) {
             node = $(node);
-            if ( !node.is('.plupload') ) {
+            
+            if (!node.is('.plupload')) {
                 node.remove();
             }
         });
-        target.prepend( html );
+        target.prepend(html);
 
         
     }
 
-    $.fn.pluploadQueue = function( settings, files, html ) {
+    $.fn.pluploadQueue = function(settings, files, html) {
         if (settings) {
             this.each(function() {
                 var uploader, target, id;
@@ -207,7 +209,7 @@
 
                     // Re-add drag message if there is no files
                     if (!uploader.files.length && uploader.features.dragdrop && uploader.settings.dragdrop) {
-                        $( '#' + id + '_filelist' ).append( '<li class="plupload_droptext">' + _( 'Drag files here.' ) + '</li>' );
+                        $( '#' + id + '_filelist' ).append( '<li class="plupload_droptext">' + _( 'drag_file_here' ) + '</li>' );
                     }
                     $( 'ul.plupload_filelist' ).sortable();
                 }
@@ -260,7 +262,7 @@
                     // Enable drag/drop
                     if ( up.features.dragdrop && up.settings.dragdrop ) {
                         up.settings.drop_element = id + '_filelist';
-                        $( '#' + id + '_filelist' ).append( '<li class="plupload_droptext">' + _( 'Drag files here.' ) + '</li>' );
+                        $( '#' + id + '_filelist' ).append( '<li class="plupload_droptext">' + _( 'drag_file_here' ) + '</li>' );
                     }
 
                     $( '#' + id + '_container' ).attr( 'title', 'Using runtime: ' + res.runtime );
