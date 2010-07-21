@@ -193,10 +193,24 @@ class xrowMultiBinaryType extends eZDataType
                     }
                 }
                 // save the chronology of the files for sorting
-                $contentObjectAttribute->setAttribute( 'data_text', serialize( $files ) );
-                $contentObjectAttribute->store();
+
             }
         }
+        else
+        {
+        	$files = array();
+        	$binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+            foreach ( $binaryFiles as $binaryFile )
+                {
+                    if ( $binaryFile instanceof eZBinaryFile2 )
+                    {
+                            eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
+
+                    }
+                }
+        }
+        $contentObjectAttribute->setAttribute( 'data_text', serialize( $files ) );
+        $contentObjectAttribute->store();
     }
 
     /*!

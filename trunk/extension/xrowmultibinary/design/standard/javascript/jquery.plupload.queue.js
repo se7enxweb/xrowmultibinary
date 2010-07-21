@@ -26,6 +26,7 @@
             }
         });
         target.prepend( html );
+
         
     }
 
@@ -90,6 +91,7 @@
                     if (uploader.files.length > 0)
                     {
                         $.each( uploader.files, function( i, file ) {
+                        	$( 'div.plupload_file_percent',  $( '#' + file['id'] ) ).html(file['percent'] + '%');
                             total_percent = parseInt( total_percent ) + parseInt( file['percent'] );
                             needed_percent = parseInt( needed_percent ) + 100;
                         });
@@ -106,6 +108,7 @@
                     // All files are uploaded
                     if (uploader.total.uploaded == uploader.files.length) {
                         uploader.stop();
+
                     }
                 }
                 
@@ -142,7 +145,7 @@
                                 '<div id="'+ file.id +'_delete" class="plupload_file_action2"></div>' +
                                 '<div class="plupload_file_action"><a href="#"></a></div>' +
                                 '<div class="plupload_file_size">' + plupload.formatSize(file.size) + '</div>' +
-                                '<div class="plupload_file_size">' + file.percent + '%</div>' +
+                                '<div class="plupload_file_percent">' + file.percent + '%</div>' +
                                 '<div class="plupload_clearer">&nbsp;</div>' +
                                 inputHTML +
                             '</li>'
@@ -277,6 +280,17 @@
                     });
 
                     $( 'a.plupload_start', target ).addClass( 'plupload_disabled' );
+                    /** auto enable upload
+                    if ( $("input[name=PublishButton]") )
+                    {
+                    	$("input[name=PublishButton]").bind('click', function(event) 
+                        {
+                    		  event.preventDefault();
+                    		  uploader.start();
+                    	});
+
+                    }
+                    */
                 });
 
                 uploader.init();
@@ -316,6 +330,12 @@
                 uploader.bind( 'StateChanged', function( up ) {
                     if ( up.state == plupload.STOPPED ) {
                         updateList();
+                        /** auto enable upload
+                        if ( $("input[name=PublishButton]") )
+                        {
+                        	$("#editform").submit();
+                        }
+                        */
                     }
                 });
 

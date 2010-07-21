@@ -151,7 +151,7 @@ function storeName( $Filename = false, $suffix = false, $MimeCategory, $seed )
     }
     $suffixString = false;
     if ( $suffix != false )
-        $suffixString = '.$suffix';
+        $suffixString = '.'.$suffix;
     
     $dest_name = $dir . '/' . md5( basename( $Filename ) . $seed ) . $suffixString;
     
