@@ -1,10 +1,8 @@
 <?php /*
 
-[ezjscServer]
-FunctionList[]=multibinary_upload
-
-[ezjscServer_ezcom]
+[ezjscServer_xrowm]
 Class=xrowMultiBinaryServerFunctions
-Functions[]=multibinary_upload
+File=extension/xrowmultibinary/classes/xrowmultibinaryserverfunctions.php
+
 
 */ ?>
