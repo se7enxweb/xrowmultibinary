@@ -289,6 +289,7 @@
                     	$("input[name=PublishButton]").bind('click', function(event) 
                         {
                     		  event.preventDefault();
+                    		  $("body").css("cursor", "wait");
                     		  uploader.start();
                     	});
 

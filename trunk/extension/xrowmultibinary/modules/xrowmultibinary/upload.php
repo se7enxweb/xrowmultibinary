@@ -67,7 +67,7 @@ if ( isset( $_SERVER['HTTP_CONTENT_TYPE'] ) )
 
 if ( isset( $_SERVER['CONTENT_TYPE'] ) )
     $contentType = $_SERVER['CONTENT_TYPE'];
-
+#eZLog::write(  "CONTENT_TYPE: " .$contentType . ' Chunk: ' . $_REQUEST['chunk'] ,'upload.log');
 if ( strpos( $contentType, 'multipart' ) !== false )
 {
     if ( isset( $_FILES['file']['tmp_name'] ) && is_uploaded_file( $_FILES['file']['tmp_name'] ) )
