@@ -282,9 +282,10 @@
                     });
 
                     $( 'a.plupload_start', target ).addClass( 'plupload_disabled' );
-                    /** auto enable upload
-                    if ( $("input[name=PublishButton]") )
+                
+                    if ( $("input[name=PublishButton]") && settings.upload_on_publish )
                     {
+                    	$( 'a.plupload_start', target ).hide();
                     	$("input[name=PublishButton]").bind('click', function(event) 
                         {
                     		  event.preventDefault();
@@ -292,7 +293,7 @@
                     	});
 
                     }
-                    */
+                    
                 });
 
                 uploader.init();
@@ -332,12 +333,11 @@
                 uploader.bind( 'StateChanged', function( up ) {
                     if ( up.state == plupload.STOPPED ) {
                         updateList();
-                        /** auto enable upload
-                        if ( $("input[name=PublishButton]") )
+                        if ( $("input[name=PublishButton]") && settings.upload_on_publish )
                         {
+                        	$("#editform").prepend('<input type="hidden" name="PublishButton" value="PublishButton"/>');
                         	$("#editform").submit();
                         }
-                        */
                     }
                 });
 

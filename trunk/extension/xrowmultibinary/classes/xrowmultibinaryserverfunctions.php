@@ -59,7 +59,7 @@ class xrowMultiBinaryServerFunctions extends ezjscServerFunctions
             'add_file' => ezi18n('extension/xrowmultibinary', 'Add file'),
             'add_files' => ezi18n('extension/xrowmultibinary', 'Add files'),
             'start_upload' => ezi18n('extension/xrowmultibinary', 'Start upload'),
-            'drag_file_here' => ezi18n('extension/xrowmultibinary', 'Drag files here123.'),
+            'drag_file_here' => ezi18n('extension/xrowmultibinary', 'Drag files here.'),
             'file_exists' => ezi18n('extension/xrowmultibinary', 'A file with this name is already exists.'),
             'allowed_to_upload_one_file' => ezi18n('extension/xrowmultibinary', 'You are allowed to upload only one file.'),
             'allowed_to_upload_x_files' => ezi18n('extension/xrowmultibinary', 'You are allowed to upload only %s files.')

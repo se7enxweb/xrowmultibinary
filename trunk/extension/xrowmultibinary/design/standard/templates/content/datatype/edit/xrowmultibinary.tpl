@@ -3,17 +3,13 @@
 {/default}
 
 {* fetch the content of the class wich includes this datatype *}
-{def $class_id=ezini( 'Settings', 'ClassIdentifierOrId', 'xrowmultibinary.ini' )
-     $attribute_name=ezini( 'Settings', 'AttributeName', 'xrowmultibinary.ini' )
-     $content_object = fetch( 'content', 'class', hash( 'class_id', $class_id ) )
-     $max_filesize = $content_object.data_map.$attribute_name.data_int1
-     $max_number_of_files = $content_object.data_map.$attribute_name.data_int2
+{def $max_filesize = $attribute.contentclass_attribute.data_int1
+     $max_number_of_files = $attribute.contentclass_attribute.data_int2
      $file_button_text = 'add_files'
      $language = ezini( 'RegionalSettings', 'Locale', 'site.ini')
      $dependency_js_list = array( 'xrowm::i18n::'|concat( $language ) )
 }
 
-{$dependency_js_list}
 {if $max_number_of_files|eq( 1 )}
     {set $file_button_text = 'add_file'}
 {/if}
@@ -64,8 +60,8 @@ var html='<div class="plupload_wrapper plupload_scroll">' +
                 '<div class="plupload_filelist_footer">' +
                     '<div class="plupload_file_name">' +
                         '<div class="plupload_buttons">' +
-                            '<a href="#" class="plupload_button plupload_add">' + plupload.translate( '{/literal}{$file_button_text}{literal}' ) + '</a>' +
-                            '<a href="#" class="plupload_button plupload_start">' + plupload.translate( 'start_upload' ) + '</a>' +
+                            '<a href="#" id="plupload_add" class="plupload_button plupload_add">' + plupload.translate( '{/literal}{$file_button_text}{literal}' ) + '</a>' +
+                            '<a href="#" id="plupload_start" class="plupload_button plupload_start">' + plupload.translate( 'start_upload' ) + '</a>' +
                         '</div>' +
                         '<span class="plupload_upload_status"></span>' +
                     '</div>' +
@@ -105,6 +101,7 @@ $(function() {
         chunk_size : '1mb',
         unique_names : false,
         no_files_with_same_name : true,
+        upload_on_publish : true,
         rename: false,
         language: '{/literal}{$language}{literal}',
         max_number_of_files: '{/literal}{$max_number_of_files}{literal}',
