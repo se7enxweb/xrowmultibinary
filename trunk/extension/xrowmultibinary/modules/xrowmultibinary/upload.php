@@ -1,6 +1,7 @@
 <?php
 $Module = $Params['Module'];
 $attribute = eZContentObjectAttribute::fetch( $Params['AttributeID'], $Params['Version'], array( 'language_code' => $Params['Language'] ) );
+
 if ( ! $attribute )
 {
     return $Module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel' );
@@ -23,6 +24,8 @@ if ( ! $obj->attribute( 'can_edit' ) )
 {
     return $Module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel' );
 }
+
+$buffer_length = 1024*100;
 // HTTP headers for no cache etc
 header( 'Content-type: text/plain; charset=UTF-8' );
 header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
@@ -35,12 +38,6 @@ header( 'Pragma: no-cache' );
 $targetDir = eZSys::instance()->storageDirectory() . DIRECTORY_SEPARATOR . 'plupload';
 $cleanupTargetDir = false; // Remove old files
 $maxFileAge = 60 * 60; // Temp file age in seconds
-
-
-// 5 minutes execution time
-@set_time_limit( 5 * 60 );
-// usleep(5000);
-
 
 // Get parameters
 $chunk = isset( $_REQUEST['chunk'] ) ? $_REQUEST['chunk'] : 0;
@@ -67,7 +64,13 @@ if ( isset( $_SERVER['HTTP_CONTENT_TYPE'] ) )
 
 if ( isset( $_SERVER['CONTENT_TYPE'] ) )
     $contentType = $_SERVER['CONTENT_TYPE'];
-#eZLog::write(  "CONTENT_TYPE: " .$contentType . ' Chunk: ' . $_REQUEST['chunk'] ,'upload.log');
+
+$logging = false;
+$total = 0;
+if( $logging && isset( $_REQUEST['chunk'] ) )
+{
+	eZLog::write(  "CONTENT_TYPE: " .$contentType . ' Chunk: ' . $_REQUEST['chunk'] ,'upload.log');
+}
 if ( strpos( $contentType, 'multipart' ) !== false )
 {
     if ( isset( $_FILES['file']['tmp_name'] ) && is_uploaded_file( $_FILES['file']['tmp_name'] ) )
@@ -81,7 +84,7 @@ if ( strpos( $contentType, 'multipart' ) !== false )
             
             if ( $in )
             {
-                while ( $buff = fread( $in, 4096 ) )
+                while ( $buff = fread( $in, $buffer_length ) )
                     fwrite( $out, $buff );
             }
             else
@@ -101,6 +104,9 @@ if ( strpos( $contentType, 'multipart' ) !== false )
 }
 else
 {
+	set_time_limit(0);
+    $mem = $attribute->attribute( 'contentclass_attribute' )->DataInt1 * 2;// twice the max upload size
+    ini_set('memory_limit', $mem.'M');
     // Open temp file
     $out = fopen( $storeName, $chunk == 0 ? 'wb' : 'ab' );
     if ( $out )
@@ -110,8 +116,15 @@ else
         
         if ( $in )
         {
-            while ( $buff = fread( $in, 4096 ) )
+            while ( $buff = fread( $in, $buffer_length ) )
+			{
                 fwrite( $out, $buff );
+				$total = filesize( $storeName );
+				if( $logging )
+				{
+					eZLog::write(  "File: " . $storeName . ' Bytes: ' . $total ,'upload.log');
+				}
+			}
         }
         else
             die( '{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}' );
