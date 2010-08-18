@@ -95,7 +95,7 @@ $(function() {
     }
 
     $("#uploader").pluploadQueue({
-        runtimes : 'html5,gears,flash,silverlight,browserplus',
+        runtimes : 'gears,flash,silverlight,browserplus,html5', // not proven stable html5
         url : '{/literal}{concat( "xrowmultibinary/upload/",$attribute.id,"/",$attribute.version,"/",$attribute.language_code)|ezurl(no)}{literal}/' + randomString(),
         max_file_size : '{/literal}{$max_filesize}mb{literal}',
         chunk_size : '1mb',
