@@ -14,6 +14,7 @@
 */
 
 Developed by
-Björn Dieding/Kristina Ebel ( bjoern@xrow.de/kristina@xrow.de )
+BjÃ¶rn Dieding/Kristina Ebel ( bjoern@xrow.de/kristina@xrow.de )
 
-This extenstion allows you to add your openx banner.
+This extenstion allows multi files upload via drag and drop or select and confirm. 
+You can define max file size and max number of files for the upload in the class which includes this datatype.
