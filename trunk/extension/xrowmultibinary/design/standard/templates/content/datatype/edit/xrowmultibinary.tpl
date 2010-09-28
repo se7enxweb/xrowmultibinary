@@ -7,6 +7,7 @@
      $max_number_of_files = $attribute.contentclass_attribute.data_int2
      $file_button_text = 'add_files'
      $language = ezini( 'RegionalSettings', 'Locale', 'site.ini')
+     $runtimes = ezini( 'Settings', 'Runtimes', 'xrowmultibinary.ini')
      $dependency_js_list = array( 'xrowm::i18n::'|concat( $language ) )
 }
 
@@ -95,7 +96,7 @@ $(function() {
     }
 
     $("#uploader").pluploadQueue({
-        runtimes : 'gears,flash,silverlight,browserplus', // not proven stable html5
+        runtimes : '{/literal}{$runtimes}{literal}', // not proven stable html5
         url : '{/literal}{concat( "xrowmultibinary/upload/",$attribute.id,"/",$attribute.version,"/",$attribute.language_code)|ezurl(no)}{literal}/' + randomString(),
         max_file_size : '{/literal}{$max_filesize}mb{literal}',
         chunk_size : '1mb',

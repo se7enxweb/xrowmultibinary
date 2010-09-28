@@ -1,6 +1,6 @@
 /*
-    OpenX module for eZ publish
-    Copyright (C) 2004-2007  xrow GbR, Hanover Germany
+    Upload multi files extension for eZ publish
+    Copyright (C) 2010  xrow GmbH, Hanover Germany
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,3 +18,18 @@ Björn Dieding/Kristina Ebel ( bjoern@xrow.de/kristina@xrow.de )
 
 This extenstion allows multi files upload via drag and drop or select and confirm. 
 You can define max file size and max number of files for the upload in the class which includes this datatype.
+
+Following runtimes can be used (define in xrowmultibinary.ini):
+
+Flash
+	This runtime supports features: jpgresize, pngresize, chunks.
+Html5
+	This runtime supports features: dragdrop, jpgresize, pngresize.
+Silverlight
+	This runtime supports features: jpgresize, pngresize, chunks. Only for IE.
+	
+Example for the xrowmultibinary.ini
+
+[Settings]
+Runtimes=flash
+#or Runtimes=flash,html5,silverlight

@@ -153,7 +153,6 @@
                             '</li>'
                         );
 
-                        $('#'+ file.id + '_delete').attr('title', 'Using runtime: ');
                         $('#'+ file.id + '_delete').click(function(e)
                         {
                             $('#' + file.id).remove();
