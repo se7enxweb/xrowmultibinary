@@ -52,7 +52,12 @@ class xrowMultiBinaryPassthroughHandler extends eZBinaryFileHandler
 
         if ( $fileName != "" and $file->exists() )
         {
-            $file->fetch( true );
+#            $file->fetch( true );
+if ( $file instanceof  eZDFSFileHandler )
+{
+    $path = eZINI::instance('file.ini')->variable('eZDFSClusteringSettings' , 'MountPointPath');
+    $fileName = $path . '/' . $fileName;
+}
             $fileSize = $file->size();
             $mimeType =  $fileInfo['mime_type'];
             $originalFileName = $fileInfo['original_filename'];
