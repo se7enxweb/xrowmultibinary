@@ -278,24 +278,21 @@
 
                     $( 'a.plupload_stop', target ).click( function( e ) {
                         uploader.stop();
-
                         e.preventDefault();
                     });
 
                     $( 'a.plupload_start', target ).addClass( 'plupload_disabled' );
-                
-                    if ( $("input[name=PublishButton]") && settings.upload_on_publish )
-                    {
-                    	$( 'a.plupload_start', target ).hide();
-                    	$("input[name=PublishButton]").bind('click', function(event) 
-                        {
-                    		  event.preventDefault();
-                    		  $("body").css("cursor", "wait");
-                    		  uploader.start();
-                    	});
 
+                    if ( $( 'input[name=PublishButton]' ) && settings.upload_on_publish )
+                    {
+                        $( 'a.plupload_start', target ).hide();
+                        $( 'input[name=PublishButton]' ).bind('click', function(event) 
+                        {
+                            event.preventDefault();
+                            $( 'body' ).css( 'cursor', 'wait' );
+                            uploader.start();
+                        });
                     }
-                    
                 });
 
                 uploader.init();
@@ -335,10 +332,10 @@
                 uploader.bind( 'StateChanged', function( up ) {
                     if ( up.state == plupload.STOPPED ) {
                         updateList();
-                        if ( $("input[name=PublishButton]") && settings.upload_on_publish )
+                        if ( $( 'input[name=PublishButton]' ) && settings.upload_on_publish )
                         {
-                        	$("#editform").prepend('<input type="hidden" name="PublishButton" value="PublishButton"/>');
-                        	$("#editform").submit();
+                            $( '#editform' ).prepend( '<input type="hidden" name="PublishButton" value="PublishButton"/>' );
+                            $( '#editform' ).submit();
                         }
                     }
                 });

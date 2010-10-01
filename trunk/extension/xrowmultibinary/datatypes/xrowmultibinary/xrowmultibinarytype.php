@@ -158,6 +158,12 @@ class xrowMultiBinaryType extends eZDataType
         if ( $contentObjectAttribute->validateIsRequired() )
         {
             $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+            if ( $http->postVariable( 'plup_tmp_name' ) === null )
+            {
+                $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes',
+                                                                     'File/files could not be deleted. One valid file is required.' ) );
+                return eZInputValidator::STATE_INVALID;
+            }
             if ( !is_array( $binaryFiles ) || count( $binaryFiles ) == 0 )
             {
                 $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes',
@@ -174,6 +180,8 @@ class xrowMultiBinaryType extends eZDataType
      */
     function fetchObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
+        $sys = eZSys::instance();
+        $storage_dir = $sys->storageDirectory();
         if ( $http->hasPostVariable( 'plup_tmp_name' ) )
         {
             $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
@@ -188,26 +196,56 @@ class xrowMultiBinaryType extends eZDataType
                     {
                         if ( !in_array( $binaryFile->attribute( 'original_filename' ), $files ) )
                         {
+                            // delete filedata from database
                             eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
+
+                            // delete the file from storage
+                            $mimeType =  $binaryFile->attribute( 'mime_type' );
+                            list( $prefix, $suffix ) = explode( '/', $mimeType );
+                            $orig_dir = $storage_dir . '/original/' . $prefix;
+                            $fileName = $binaryFile->attribute( 'filename' );
+                            $filePath = $orig_dir . "/" . $fileName;
+                            $file = eZClusterFileHandler::instance( $filePath );
+
+                            if ( $file->exists() )
+                            {
+                                $file->delete();
+                            }
                         }
                     }
                 }
-                // save the chronology of the files for sorting
-
             }
         }
         else
         {
-        	$files = array();
-        	$binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
-            foreach ( $binaryFiles as $binaryFile )
+            if ( $contentObjectAttribute->validateIsRequired() && $http->postVariable( 'plup_tmp_name' ) === null )
+            {
+                return;
+            }
+            else
+            {
+                $files = array();
+                $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+                foreach ( $binaryFiles as $binaryFile )
                 {
                     if ( $binaryFile instanceof eZBinaryFile2 )
                     {
-                            eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
-
+                        // delete filedata from database
+                        eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
+                        // delete the file from storage
+                        $mimeType =  $binaryFile->attribute( 'mime_type' );
+                        list( $prefix, $suffix ) = explode('/', $mimeType );
+                        $orig_dir = $storage_dir . '/original/' . $prefix;
+                        $fileName = $binaryFile->attribute( 'filename' );
+                        $filePath = $orig_dir . "/" . $fileName;
+                        $file = eZClusterFileHandler::instance( $filePath );
+                        if ( $file->exists() )
+                        {
+                            $file->delete();
+                        }
                     }
                 }
+            }
         }
         $contentObjectAttribute->setAttribute( 'data_text', serialize( $files ) );
         $contentObjectAttribute->store();
