@@ -209,7 +209,9 @@ class xrowMultiBinaryType extends eZDataType
 
                             if ( $file->exists() )
                             {
-                                $file->delete();
+                                $eZDFSFHBackend = new eZDFSFileHandlerDFSBackend();
+                                $eZDFSFHBackend->delete($filePath);
+                                #$file->delete();
                             }
                         }
                     }
