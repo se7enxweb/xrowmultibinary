@@ -113,7 +113,7 @@
 
                     }
                 }
-                var totalSize = 0;
+
                 // after loading the attribute xrowmultibinary and the content (if there are files or not)
                 function updateList() {
                     var fileList = $('ul.plupload_filelist', target).html(''), 
@@ -140,9 +140,7 @@
                             var file_id = ID.split( '.' );
                             file.id = file_id[0];
                         }
-                        
-                        totalSize = parseInt( totalSize ) + parseInt( file.size );
-                        
+
                         fileList.append(
                             '<li id="' + file.id + '" class="sortable">' +
                                 '<div class="plupload_file_name"><span>' + file.name + '</span></div>' +
@@ -165,7 +163,7 @@
                         //handleStatus(file);
                     });
 
-                    $('span.plupload_total_file_size', target).html(plupload.formatSize(totalSize));
+                    $('span.plupload_total_file_size', target).html(plupload.formatSize(uploader.total.size));
 
                     if ( uploader.total.queued === 0 ) {
                         if ( settings.max_number_of_files )
