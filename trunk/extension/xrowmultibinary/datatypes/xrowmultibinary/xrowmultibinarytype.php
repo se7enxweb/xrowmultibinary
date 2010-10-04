@@ -140,7 +140,7 @@ class xrowMultiBinaryType extends eZDataType
 
                 if ( $file->exists() )
                 {
-                    $file->fileDelete( $filePath );
+                    $file->delete();
                     eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
                 }
             }
@@ -207,7 +207,7 @@ class xrowMultiBinaryType extends eZDataType
 
                             if ( $file->exists() )
                             {
-                                $file->fileDelete( $filePath );
+                                $file->delete();
                                 eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
                             }
                         }
@@ -240,7 +240,7 @@ class xrowMultiBinaryType extends eZDataType
                         $file = eZClusterFileHandler::instance( $filePath );
                         if ( $file->exists() )
                         {
-                            $file->fileDelete( $filePath );
+                            $file->delete();
                             eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
                         }
                     }
