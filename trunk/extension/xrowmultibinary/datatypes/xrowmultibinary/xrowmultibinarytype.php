@@ -195,8 +195,7 @@ class xrowMultiBinaryType extends eZDataType
                         if ( !in_array( $binaryFile->attribute( 'original_filename' ), $files ) )
                         {
                             // delete filedata from database
-                            eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
-
+                            #eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
                             // delete the file from storage
                             $mimeType =  $binaryFile->attribute( 'mime_type' );
                             list( $prefix, $suffix ) = explode( '/', $mimeType );
@@ -229,7 +228,7 @@ class xrowMultiBinaryType extends eZDataType
                     if ( $binaryFile instanceof eZBinaryFile2 )
                     {
                         // delete filedata from database
-                        eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
+                        #eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
                         // delete the file from storage
                         $mimeType =  $binaryFile->attribute( 'mime_type' );
                         list( $prefix, $suffix ) = explode('/', $mimeType );
