@@ -181,7 +181,7 @@ elseif( !isset( $_REQUEST['chunk'] ) )
     $binary->setAttribute( 'original_filename', $fileName );
     $binary->setAttribute( 'mime_type', $mime['name'] );
     $binary->store();
-
+    
     $fileHandler = eZClusterFileHandler::instance();
     $fileHandler->fileStore( $storeName, 'binaryfile', true, $mime );
 }
