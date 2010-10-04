@@ -141,7 +141,9 @@ class xrowMultiBinaryType extends eZDataType
                 if ( is_object( $file ) )
                 {
                     // delete file from db and from local
-                    $file->purge();
+                    eZDFSFileHandlerMySQLBackend::_purge( $filePath );
+                    #eZClusterFileHandler::
+                    #$file->purge();
                 }
             }
         }
@@ -206,7 +208,8 @@ class xrowMultiBinaryType extends eZDataType
                             if ( is_object( $file ) )
                             {
                                 // delete file from db and from local
-                                $file->purge();
+                                eZDFSFileHandlerMySQLBackend::_purge( $filePath );
+                                #$file->purge();
                             }
                         }
                     }
@@ -239,7 +242,8 @@ class xrowMultiBinaryType extends eZDataType
                         if ( is_object( $file ) )
                         {
                             // delete file from db and from local
-                            $file->purge();
+                            eZDFSFileHandlerMySQLBackend::_purge( $filePath );
+                            #$file->purge();
                         }
                     }
                 }
