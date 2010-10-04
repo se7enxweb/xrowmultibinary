@@ -26,13 +26,17 @@ class xrowMultiBinaryType extends eZDataType
         return eZBinaryFileHandler::instance();
     }
 
-    function getBinaryFiles( $contentObjectAttribute )
+    function getBinaryFiles( $contentObjectAttribute, $version = false )
     {
         $binaryFiles = array();
         $contentObjectAttributeID = $contentObjectAttribute->attribute( 'id' );
-        $version = $contentObjectAttribute->attribute( 'version' );
-        if ( $version == null )
+        if ( $version === null )
         {
+            $binaryFiles = eZBinaryFile2::fetch( $contentObjectAttributeID );
+        }
+        elseif ( $version === false )
+        {
+            $version = $contentObjectAttribute->attribute( 'version' );
             $binaryFiles = eZBinaryFile2::fetch( $contentObjectAttributeID );
         }
         else
@@ -70,7 +74,7 @@ class xrowMultiBinaryType extends eZDataType
         $sys = eZSys::instance();
         $storage_dir = $sys->storageDirectory();
 
-        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
 
         if ( is_array( $binaryFiles ) && count( $binaryFiles ) > 0 )
         {
@@ -119,25 +123,23 @@ class xrowMultiBinaryType extends eZDataType
     {
         $sys = eZSys::instance();
         $storage_dir = $sys->storageDirectory();
-        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
 
-        if ( $version == null )
-        {
-            eZBinaryFile2::removeByID( $contentObjectAttribute->attribute( 'id' ), null );
-        }
+        // delete filedata from database
+        eZBinaryFile2::removeByID( $contentObjectAttribute->attribute( 'id' ), $version );
 
         foreach ( $binaryFiles as $binaryFile )
         {
             if ( $binaryFile instanceof eZBinaryFile2 )
             {
+                // delete filedata from dfs
                 $mimeType =  $binaryFile->attribute( "mime_type" );
                 list( $prefix, $suffix ) = explode('/', $mimeType );
                 $orig_dir = $storage_dir . '/original/' . $prefix;
                 $fileName = $binaryFile->attribute( "filename" );
-
                 $filePath = $orig_dir . "/" . $fileName;
                 $file = eZClusterFileHandler::instance( $filePath );
-
+                
                 if ( $file->exists() )
                 {
                     $file->delete();
@@ -154,7 +156,8 @@ class xrowMultiBinaryType extends eZDataType
 
         if ( $contentObjectAttribute->validateIsRequired() )
         {
-            $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+            $version = $contentObjectAttribute->attribute( 'version' );
+            $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
             if ( $http->postVariable( 'plup_tmp_name' ) === null )
             {
                 $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes',
@@ -179,10 +182,12 @@ class xrowMultiBinaryType extends eZDataType
     {
         $sys = eZSys::instance();
         $storage_dir = $sys->storageDirectory();
+        
+        $version = $contentObjectAttribute->attribute( 'version' );
+        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
+
         if ( $http->hasPostVariable( 'plup_tmp_name' ) )
         {
-            $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
-
             if ( is_array( $binaryFiles ) && count( $binaryFiles ) > 0 )
             {
                 $files = $http->postVariable( 'plup_tmp_name' );
@@ -194,7 +199,7 @@ class xrowMultiBinaryType extends eZDataType
                         if ( !in_array( $binaryFile->attribute( 'original_filename' ), $files ) )
                         {
                             // delete filedata from database
-                            #eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
+                            eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
                             // delete the file from storage
                             $mimeType =  $binaryFile->attribute( 'mime_type' );
                             list( $prefix, $suffix ) = explode( '/', $mimeType );
@@ -220,13 +225,13 @@ class xrowMultiBinaryType extends eZDataType
             else
             {
                 $files = array();
-                $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+
                 foreach ( $binaryFiles as $binaryFile )
                 {
                     if ( $binaryFile instanceof eZBinaryFile2 )
                     {
                         // delete filedata from database
-                        #eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
+                        eZBinaryFile2::removeByFileName( $binaryFile->attribute( 'filename' ), $binaryFile->attribute( 'contentobject_attribute_id' ), $binaryFile->attribute( 'version' ) );
                         // delete the file from storage
                         $mimeType =  $binaryFile->attribute( 'mime_type' );
                         list( $prefix, $suffix ) = explode('/', $mimeType );
@@ -349,7 +354,8 @@ class xrowMultiBinaryType extends eZDataType
     function title( $contentObjectAttribute, $name = 'original_filename' )
     {
         $names = array();
-        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+        $version = $contentObjectAttribute->attribute( 'version' );
+        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
 
         if ( is_array( $binaryFiles ) && count( $binaryFiles ) > 0 )
         {
@@ -370,7 +376,8 @@ class xrowMultiBinaryType extends eZDataType
 
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
-        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+        $version = $contentObjectAttribute->attribute( 'version' );
+        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
 
         if ( count( $binaryFiles ) > 0 )
         {
@@ -389,7 +396,8 @@ class xrowMultiBinaryType extends eZDataType
         $data_map = $contentObject->dataMap();
         #$max_upload_count = $data_map['max_upload_count']->content();
 
-        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+        $version = $contentObjectAttribute->attribute( 'version' );
+        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
         
         if ( !is_array( $binaryFiles ) || count( $binaryFiles ) == 0 )
         {
@@ -427,7 +435,8 @@ class xrowMultiBinaryType extends eZDataType
 
     function metaData( $contentObjectAttribute )
     {
-        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute );
+        $version = $contentObjectAttribute->attribute( 'version' );
+        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
 
         $metaData = '';
         foreach( $binaryFiles as $file )
@@ -468,7 +477,8 @@ class xrowMultiBinaryType extends eZDataType
     function serializeContentObjectAttribute( $package, $objectAttribute )
     {
         $node = $this->createContentObjectAttributeDOMNode( $objectAttribute );
-        $binaryFiles = $this->getBinaryFiles( $objectAttribute );
+        $version = $contentObjectAttribute->attribute( 'version' );
+        $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
         // sort the files
         $sortconditions = unserialize( $objectAttribute->attribute( 'data_text' ) );
         if ( is_array( $sortconditions ) && count( $sortconditions ) > 0 )
