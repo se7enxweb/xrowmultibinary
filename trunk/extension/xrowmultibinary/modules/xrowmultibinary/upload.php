@@ -25,7 +25,7 @@ if ( ! $obj->attribute( 'can_edit' ) )
     return $Module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel' );
 }
 
-$buffer_length = 1024*100;
+$buffer_length = 1024 * 100;
 // HTTP headers for no cache etc
 header( 'Content-type: text/plain; charset=UTF-8' );
 header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
@@ -46,13 +46,13 @@ $fileName = isset( $_REQUEST['name'] ) ? $_REQUEST['name'] : '';
 
 $mime = eZMimeType::findByURL( $fileName );
 $mime['suffix'] = eZFile::suffix( $fileName );
-        $mime2 = explode( '/', $mime['name'] );
+$mime2 = explode( '/', $mime['name'] );
 
-$storeName = storeName( $fileName, $mime['suffix'],$mime2[0], $Params['Random'] );
+$storeName = storeName( $fileName, $mime['suffix'], $mime2[0], $Params['Random'] );
 // Create target dir
-if ( ! file_exists( dirname( $storeName ) ) )
+if ( !file_exists( dirname( $storeName ) ) )
 {
-    if ( ! eZDir::mkdir( dirname( $storeName ), false, true ) )
+    if ( !eZDir::mkdir( dirname( $storeName ), false, true ) )
     {
         die( '{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "Failed to open temp directory."}, "id" : "id"}' );
     }
@@ -60,16 +60,20 @@ if ( ! file_exists( dirname( $storeName ) ) )
 
 // Look for the content type header
 if ( isset( $_SERVER['HTTP_CONTENT_TYPE'] ) )
+{
     $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
+}
 
 if ( isset( $_SERVER['CONTENT_TYPE'] ) )
+{
     $contentType = $_SERVER['CONTENT_TYPE'];
+}
 
 $logging = false;
 $total = 0;
 if( $logging && isset( $_REQUEST['chunk'] ) )
 {
-	eZLog::write(  "Name: ". $fileName . "CONTENT_TYPE: " .$contentType . ' Chunk ' . $_REQUEST['chunk'] . ' from ' . $_REQUEST['chunks'] , 'upload.log');
+    eZLog::write(  "Name: ". $fileName . "CONTENT_TYPE: " .$contentType . ' Chunk ' . $_REQUEST['chunk'] . ' from ' . $_REQUEST['chunks'] , 'upload.log');
 }
 if ( strpos( $contentType, 'multipart' ) !== false )
 {
@@ -85,7 +89,9 @@ if ( strpos( $contentType, 'multipart' ) !== false )
             if ( $in )
             {
                 while ( $buff = fread( $in, $buffer_length ) )
+                {
                     fwrite( $out, $buff );
+                }
             }
             else
             {
@@ -125,14 +131,14 @@ else
         if ( $in )
         {
             while ( $buff = fread( $in, $buffer_length ) )
-	    {
+            {
                 fwrite( $out, $buff );
-		$total = filesize( $storeName );
-		if( $logging )
-		{
-		    eZLog::write(  "File: " . $storeName . ' Bytes: ' . $total ,'upload.log');
-		}
-	    }
+                $total = filesize( $storeName );
+                if( $logging )
+                {
+                    eZLog::write(  "File: " . $storeName . ' Bytes: ' . $total ,'upload.log');
+                }
+            }
         }
         else
         {
@@ -153,35 +159,31 @@ else
 $targetchunk = $chunks -1;
 if( isset( $_REQUEST['chunk'] ) and $chunk == $targetchunk )
 {
+    $contentObjectAttributeID = $attribute->attribute( 'id' );
+    $version = $attribute->attribute( 'version' );
 
-$contentObjectAttributeID = $attribute->attribute( 'id' );
-$version = $attribute->attribute( 'version' );
+    $binary = eZBinaryFile2::create( $contentObjectAttributeID, $version );
+    $binary->setAttribute( 'filename', basename( $storeName ) );
+    $binary->setAttribute( 'original_filename', $fileName );
+    $binary->setAttribute( 'mime_type', $mime['name'] );
+    $binary->store();
 
-$binary = eZBinaryFile2::create( $contentObjectAttributeID, $version );
-$binary->setAttribute( 'filename', basename( $storeName ) );
-$binary->setAttribute( 'original_filename', $fileName );
-$binary->setAttribute( 'mime_type', $mime['name'] );
-$binary->store();
-
-$fileHandler = eZClusterFileHandler::instance();
-$fileHandler->fileStore( $storeName, 'binaryfile', true, $mime );
-
+    $fileHandler = eZClusterFileHandler::instance();
+    $fileHandler->fileStore( $storeName, 'binaryfile', true, $mime );
 }
-elseif(!isset( $_REQUEST['chunk'] ))
+elseif( !isset( $_REQUEST['chunk'] ) )
 {
+    $contentObjectAttributeID = $attribute->attribute( 'id' );
+    $version = $attribute->attribute( 'version' );
 
-$contentObjectAttributeID = $attribute->attribute( 'id' );
-$version = $attribute->attribute( 'version' );
+    $binary = eZBinaryFile2::create( $contentObjectAttributeID, $version );
+    $binary->setAttribute( 'filename', basename( $storeName ) );
+    $binary->setAttribute( 'original_filename', $fileName );
+    $binary->setAttribute( 'mime_type', $mime['name'] );
+    $binary->store();
 
-$binary = eZBinaryFile2::create( $contentObjectAttributeID, $version );
-$binary->setAttribute( 'filename', basename( $storeName ) );
-$binary->setAttribute( 'original_filename', $fileName );
-$binary->setAttribute( 'mime_type', $mime['name'] );
-$binary->store();
-
-$fileHandler = eZClusterFileHandler::instance();
-$fileHandler->fileStore( $storeName, 'binaryfile', true, $mime );
-
+    $fileHandler = eZClusterFileHandler::instance();
+    $fileHandler->fileStore( $storeName, 'binaryfile', true, $mime );
 }
 
 // Return JSON-RPC response
@@ -189,18 +191,18 @@ echo '{"jsonrpc" : "2.0", "result" : null, "id" : "'.basename( $storeName ).'"}'
 eZExecution::cleanExit();
 function storeName( $Filename = false, $suffix = false, $MimeCategory, $seed )
 {
-    
     $dir = eZSys::storageDirectory() . '/original/' . $MimeCategory;
-    if ( ! file_exists( $dir ) )
+    if ( !file_exists( $dir ) )
     {
         eZDir::mkdir( $dir, false, true );
     }
     $suffixString = false;
     if ( $suffix != false )
+    {
         $suffixString = '.'.$suffix;
-    
+    }
     $dest_name = $dir . '/' . md5( basename( $Filename ) . $seed ) . $suffixString;
     
     return $dest_name;
-
 }
+?>
