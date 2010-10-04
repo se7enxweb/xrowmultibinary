@@ -138,10 +138,10 @@ class xrowMultiBinaryType extends eZDataType
                 $filePath = $orig_dir . "/" . $fileName;
                 $file = eZClusterFileHandler::instance( $filePath );
 
-                if ( $file->exists() )
+                if ( is_object( $file ) )
                 {
-                    $file->delete();
-                    eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
+                    // delete file from db and from local
+                    $file->purge();
                 }
             }
         }
@@ -204,11 +204,10 @@ class xrowMultiBinaryType extends eZDataType
                             $fileName = $binaryFile->attribute( 'filename' );
                             $filePath = $orig_dir . "/" . $fileName;
                             $file = eZClusterFileHandler::instance( $filePath );
-
-                            if ( $file->exists() )
+                            if ( is_object( $file ) )
                             {
-                                $file->delete();
-                                eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
+                                // delete file from db and from local
+                                $file->purge();
                             }
                         }
                     }
@@ -238,10 +237,10 @@ class xrowMultiBinaryType extends eZDataType
                         $fileName = $binaryFile->attribute( 'filename' );
                         $filePath = $orig_dir . "/" . $fileName;
                         $file = eZClusterFileHandler::instance( $filePath );
-                        if ( $file->exists() )
+                        if ( is_object( $file ) )
                         {
-                            $file->delete();
-                            eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
+                            // delete file from db and from local
+                            $file->purge();
                         }
                     }
                 }
