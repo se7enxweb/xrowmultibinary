@@ -135,15 +135,13 @@ class xrowMultiBinaryType extends eZDataType
                 $orig_dir = $storage_dir . '/original/' . $prefix;
                 $fileName = $binaryFile->attribute( "filename" );
 
-                // Check if there are any other records in ezbinaryfile that point to that fileName.
-                $binaryObjectsWithSameFileName = eZBinaryFile2::fetchByFileName( $fileName );
-
                 $filePath = $orig_dir . "/" . $fileName;
                 $file = eZClusterFileHandler::instance( $filePath );
 
-                if ( $file->exists() and count( $binaryObjectsWithSameFileName ) < 1 )
+                if ( $file->exists() )
                 {
-                    $file->delete();
+                    $file->fileDelete( $filePath );
+                    eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
                 }
             }
         }
@@ -209,9 +207,8 @@ class xrowMultiBinaryType extends eZDataType
 
                             if ( $file->exists() )
                             {
-                                $eZDFSFHBackend = new eZDFSFileHandlerDFSBackend();
-                                $eZDFSFHBackend->delete($filePath);
-                                #$file->delete();
+                                $file->fileDelete( $filePath );
+                                eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
                             }
                         }
                     }
@@ -243,7 +240,8 @@ class xrowMultiBinaryType extends eZDataType
                         $file = eZClusterFileHandler::instance( $filePath );
                         if ( $file->exists() )
                         {
-                            $file->delete();
+                            $file->fileDelete( $filePath );
+                            eZDebug::writeDebug( 'CAM CACHE :: deleted ' . $filePath, __METHOD__ );
                         }
                     }
                 }
