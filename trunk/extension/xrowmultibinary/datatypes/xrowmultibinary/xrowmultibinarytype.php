@@ -327,8 +327,8 @@ class xrowMultiBinaryType extends eZDataType
             $db = eZDB::instance();
             $db->query( 'UPDATE ezbinaryfile 
                          SET download_count = ( download_count+1 )
-                         WHERE contentobject_attribute_id = $contentObjectAttributeID 
-                         AND version= $version 
+                         WHERE contentobject_attribute_id = ' .  $contentObjectAttributeID . ' 
+                         AND version= ' . $version . ' 
                          AND filename= "'.eZDB::instance()->escapeString( $id ).'"' );
             return true;
         }
