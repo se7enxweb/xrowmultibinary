@@ -1,5 +1,5 @@
 {default attribute_base=ContentObjectAttribute}
-<div id="uploader">You browser doesn't have no tools installed.</div>
+<div id="uploader">{'Please install one of the following browser plug-ins: Gears, Flash, Browserplus or Silverlight.'|i18n('extension/xrowmultibinary')}</div>
 {/default}
 
 {* fetch the content of the class wich includes this datatype *}
