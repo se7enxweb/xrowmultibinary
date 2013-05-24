@@ -14,7 +14,7 @@ class xrowMultiBinaryType extends eZDataType
     function __construct()
     {
         $this->eZDataType( self::DATA_TYPE_STRING, 
-                           ezi18n( 'kernel/classes/datatypes', 'Multiple Files', 'Datatype name' ),
+                           ezpI18n::tr( 'kernel/classes/datatypes', 'Multiple Files', 'Datatype name' ),
                            array( 'serialize_supported' => true ) );
     }
 
@@ -160,13 +160,13 @@ class xrowMultiBinaryType extends eZDataType
             $binaryFiles = $this->getBinaryFiles( $contentObjectAttribute, $version );
             if ( $http->postVariable( 'plup_tmp_name' ) === null )
             {
-                $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes',
+                $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                      'File/files could not be deleted. One valid file is required.' ) );
                 return eZInputValidator::STATE_INVALID;
             }
             if ( !is_array( $binaryFiles ) || count( $binaryFiles ) == 0 )
             {
-                $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes',
+                $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                      'A valid file is required.' ) );
                 return eZInputValidator::STATE_INVALID;
             }

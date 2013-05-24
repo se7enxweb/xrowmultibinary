@@ -52,17 +52,17 @@ class xrowMultiBinaryServerFunctions extends ezjscServerFunctions
             $lang = $args[0];
 
         $i18nArray =  array( $lang => array(
-            'select_files' => ezi18n('extension/xrowmultibinary', 'Select files'),
-            'filename' => ezi18n('extension/xrowmultibinary', 'Filename'),
-            'status' => ezi18n('extension/xrowmultibinary', 'Status'),
-            'size' => ezi18n('extension/xrowmultibinary', 'Size'),
-            'add_file' => ezi18n('extension/xrowmultibinary', 'Add file'),
-            'add_files' => ezi18n('extension/xrowmultibinary', 'Add files'),
-            'start_upload' => ezi18n('extension/xrowmultibinary', 'Start upload'),
-            'drag_file_here' => ezi18n('extension/xrowmultibinary', 'Drag files here.'),
-            'file_exists' => ezi18n('extension/xrowmultibinary', 'A file with this name is already exists.'),
-            'allowed_to_upload_one_file' => ezi18n('extension/xrowmultibinary', 'You are allowed to upload only one file.'),
-            'allowed_to_upload_x_files' => ezi18n('extension/xrowmultibinary', 'You are allowed to upload only %s files.')
+            'select_files' => ezpI18n::tr('extension/xrowmultibinary', 'Select files'),
+            'filename' => ezpI18n::tr('extension/xrowmultibinary', 'Filename'),
+            'status' => ezpI18n::tr('extension/xrowmultibinary', 'Status'),
+            'size' => ezpI18n::tr('extension/xrowmultibinary', 'Size'),
+            'add_file' => ezpI18n::tr('extension/xrowmultibinary', 'Add file'),
+            'add_files' => ezpI18n::tr('extension/xrowmultibinary', 'Add files'),
+            'start_upload' => ezpI18n::tr('extension/xrowmultibinary', 'Start upload'),
+            'drag_file_here' => ezpI18n::tr('extension/xrowmultibinary', 'Drag files here.'),
+            'file_exists' => ezpI18n::tr('extension/xrowmultibinary', 'A file with this name is already exists.'),
+            'allowed_to_upload_one_file' => ezpI18n::tr('extension/xrowmultibinary', 'You are allowed to upload only one file.'),
+            'allowed_to_upload_x_files' => ezpI18n::tr('extension/xrowmultibinary', 'You are allowed to upload only %s files.')
         ));
         $i18nString = json_encode( $i18nArray );
 
