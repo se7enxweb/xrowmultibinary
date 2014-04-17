@@ -93,7 +93,8 @@ if ( $version != $currentVersion )
 
 $fileinfo = xrowMultiBinaryType::storedFileInformation2( $contentObjectAttribute, $Params['File'] );
 xrowMultiBinaryType::handleDownload2( $contentObjectAttribute, $Params['File'] );
-$fileHandler = new eZFilePassthroughHandler();
+
+$fileHandler = eZBinaryFileHandler::instance();
 $result = $fileHandler->handleFileDownload( $contentObject, $contentObjectAttribute, eZBinaryFileHandler::TYPE_FILE, $fileinfo );
 
 if ( $result == eZBinaryFileHandler::RESULT_UNAVAILABLE )
